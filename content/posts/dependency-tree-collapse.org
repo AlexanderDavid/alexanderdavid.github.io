@@ -1,0 +1,155 @@
+#+title: Dependency Tree Collapse for N-Gram Generation
+#+tags[]: Capstone_Project, NLP
+#+date: 2019-11-06
+#+description: Splitting a sentence into n-gram chunks based on the dependency relations
+
+* Introduction
+Throughout the past semester I have been working on my senior capstone project
+for my CS undergraduate. The project is to create Emoji summaries
+for sentences and one of the integral parts of this algorithm is separating a
+sentence into a sequence of n-grams that represent it. In the initial algorithm,
+I took a naive approach of generating every single combination of n-grams,
+summarizing them all, and then returning the summary with the highest result.
+While this worked it did have some downsides. The main disadvantage of attacking
+the problem in this way was some of the n-grams contained two big ideas from the
+sentence and they were only getting translated to one Emoji. It was clear that
+this was not ideal. The approach detailed within this post uses information
+about the dependencies between words within the sentence in hopes that this will
+produce an output that is more representative.
+
+* Dependency Trees
+Dependency trees are a way to map the dependencies of words within a sentence.
+The example in figure 1 maps the dependencies within the sentence "I finished my
+homework just before the class started". Because the node containing "I" is a
+child of the "finished" node there is a direct relation between the two words.
+In this case "I" is the object that actually "finished" something. In this
+dependency tree (and in the algorithm) the actual relations that link words
+together are neither shown or used.
+
+{{< figure src="/img/tree_collapse/syntax.png" alt="A tree-like structure containing a sentence with the parts of speech of each word label as well as the dependencies shown by edges" caption="Dependency tree for an example sentence" >}}
+
+
+
+* Rules for Collapse
+The primary assumption behind this algorithm is that some dependencies can be collapsed, or
+simplified to produce larger n-grams that make up the sentence. As of right now the algorithm
+only executes two rules but it is easy to imagine other rules that could be used. The rules
+are as follows:
+1. If a node has only one child then the two nodes can be combined into one
+2. If multiple leaves are on the same level and have the same parent then they can be combined into one node
+
+** Child Dependency
+{{< figure src="/img/tree_collapse/child_step_one.png" style="margin: auto" alt="The same tree from above except there is a direct node to node relation with no other children. These two nodes are n-gramed" caption="The same tree from above except there is a direct node to node relation with no other children. These two nodes are n-gramed" >}}
+{{< figure src="/img/tree_collapse/child_step_two.png" style="margin: auto" alt="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node" caption="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node" >}}
+
+** Neighbor dependency
+{{< figure src="/img/tree_collapse/neighbor_step_one.png" style="margin: auto" alt="The same tree from above except there are nodes highlighted that are neighbors on the leaf level. These two nodes are n-gramed" caption="The same tree from above except there are nodes highlighted that are neighbors on the leaf level. These two nodes are n-gramed" >}}
+{{< figure src="/img/tree_collapse/neighbor_step_two.png" style="margin: auto" alt="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node" caption="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node" >}}
+
+* Results
+This algorithm is used directly in the sentence to Emoji algorithm, so it makes the most
+sense to present results as relative to its' application. Table 1 below shows the
+results from the old exhaustive n-gram sequencing algorithm as compared to this
+dependency relation informed algorithm.
+
+| Sentence                                                         | Exhaustive                                                         | Dependency Tree                                                       |
+|------------------------------------------------------------------+--------------------------------------------------------------------+-----------------------------------------------------------------------|
+| The student drew a snowflake on the chalk board                  | ~The student drew~ ~a~ ~snowflake~ ~on~ ~the chalk board~          | ~The student~ ~drew~ ~a snowflake~ ~the chalk~ ~on board~             |
+| I finished the homework just before class started                | ~I~ ~finished the homework just before class started~              | ~I~ ~finished~ ~the homework~ ~just before class~ ~started~           |
+| Can you calculate the number of giraffes that have ever existed? | ~can~ ~you calculate the number of giraffe that have ever existed~ | ~can you~ ~calculate~ ~number~ ~that have ever~ ~of giraffes existed~ |
+|------------------------------------------------------------------+--------------------------------------------------------------------+-----------------------------------------------------------------------|
+
+It is relatively clear that the tree collapse n-gram generation gives a more comprehensive
+n-gram sequence for the sentence. However, this may be more of a reflection of the naive-ness
+of our initial algorithm. The exhaustive algorithm relies entirely on the dataset that is
+used for the output Emoji. The lacklustre dataset is something that will be improved shortly.
+
+* Implementation
+Below, in figure 5, is the algorithm implemented in Python 3 with spaCy and
+NLTK. The general flow of the algorithm is that it performs the collapses
+detailed above and returns a list of lists. Each list within the result is
+an n-gram split into its' constituent words. It is implemented as such so
+the word can also contain the initial location of the word within the input
+so it can later be sorted. Sorting is trivial and it (along with the rest of the code) is contained within
+[[https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/blob/master/JupyterNotebooks/PartOfSpeech.ipynb][this Juypter notebook]] within the [[https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/][algorithms repo]].
+
+#+BEGIN_SRC python
+def pos_n_gram_sequence(node, n_grams=None):
+    """
+    Turn the sentence given into an n-gram sequence informed
+    by part of speech tagging
+
+    Args:
+        node(Token or str): Root token for the sentence or the
+                    sentence as a string if first run through
+        n_grams(List, Optional): List of n-grams for recursion
+    """
+    # Check if the n_grams list is none. If so it is the
+    # first run through of the function then set up the
+    # list and the sentence as an spaCy NLP root node.
+    # We do it with none because python gets
+    # slightly weird if you do this with an empty list
+    if n_grams is None:
+        n_grams = []
+    if type(node) is str:
+        node = list(nlp(node).sents)[0].root
+
+    # Rule 1.
+    # While the current node only has one child append the
+    # data from the current node to a backlog list and then
+    # loop down to the next node, checking it's child count
+    # so on and so forth
+    current_node = node
+    parent_child_data = []
+    while current_node.n_lefts + current_node.n_rights == 1:
+        # Appending both the node's token and its' position in the
+        # sentence so we can sort later
+        parent_child_data.append((current_node.orth_, current_node.i))
+        # Set the current node to the only child of the current node
+        current_node = list(current_node.children)[0]
+
+    # Add the current node's data to the parent-child dependency
+    # list so we can just add this to the result later
+    parent_child_data.append((current_node.orth_, current_node.i))
+    n_grams.append(parent_child_data)
+
+    # Rule 2. will only work if the current node has more than one
+    # child. If it has less than that then we already appended
+    # everything relevant to the list
+    if not current_node.n_lefts + current_node.n_rights > 1:
+        return
+
+    # Get the children of the current node that have children
+    children_with_children = [child for child in current_node.children
+                            if len(list(child.children)) > 0]
+
+    # Leaves are nodes that don't have children. Any children
+    # of the current node that are not in the
+    # children_with_children list are leaves and should be
+    # collapsed
+    leafs = [(child.orth_, child.i)
+            for child in current_node.children
+            if child not in children_with_children]
+
+    # Append the leafs to the n_grams
+    n_grams.append(leafs)
+
+    # Recurse through all the non-leaf children
+    for child in children_with_children:
+        pos_n_gram_sequence(child, n_grams)
+
+    return n_grams
+#+END_SRC
+
+* Future Work
+The one main future iteration for this algorithm involves generating more potential n-gram
+sequences. The current implementation only collapses the tree once to produce one n-gram
+sequence but it wouldn't be that hard to further collapse the tree to produce more. This
+further collapse could prove to improve the summary for longer sentences and could be combined
+with other n-gram sequence scoring techniques.
+
+* Related Reading and Works
+- [[http://tomato.banatao.berkeley.edu:8080/parser/parser.html][Online Dependency Tree Parser]]
+- [[https://en.wikipedia.org/wiki/Part-of-speech_tagging][Part of Speech Tagging on Wikipedia]]
+- [[https://spacy.io/usage/linguistic-features#pos-tagging][Part of Speech Tagging in spaCy]]
+- [[https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/blob/df18176149970e0143d38ee2aacfc658e0b4f56c/EmojiTranslation/Translators.py#L381][Part of Speech Tagging Translator Code (as of 11/11/19)]]
