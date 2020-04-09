@@ -1,0 +1,225 @@
+% Purpose: CV
+% Author: Alex Day
+% Date: December 12th 2019
+% Note: Compile first with latexmk and then pdftex
+\documentclass[letter]{article}
+    \usepackage{fullpage}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    \usepackage{textcomp}
+    \usepackage{hyperref}
+    \usepackage[utf8]{inputenc}
+    \usepackage[T1]{fontenc}
+    \usepackage[margin=0.75in]{geometry}
+    \usepackage{bibentry}
+    \usepackage{natbib}
+    \textheight=10in
+    \pagestyle{empty}
+    \raggedright
+    
+    \def\bull{\vrule height 0.8ex width .7ex depth -.1ex }
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    % DEFINITIONS FOR RESUME %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Gobblers
+    \makeatletter
+
+    \newcommand{\checknextargemployer}{\@ifnextchar\bgroup{\gobblenextargemployer}{\end{itemize}} }
+    \newcommand{\gobblenextargemployer}[1]{ \item #1\@ifnextchar\bgroup{\gobblenextargemployer}{\end{itemize}} }
+    
+    \newcommand{\checknextargskills}{\@ifnextchar\bgroup{\gobblenextargskills}{\end{tabular}} }
+    \newcommand{\gobblenextargskills}[2]{ #1 & #2\\ \@ifnextchar\bgroup{\gobblenextargskills}{\end{tabular}} }
+    
+    \makeatother
+    % End Gobblers
+    
+    \newcommand{\lineunder} {
+        \vspace*{-8pt} \\
+        \hspace*{-18pt} \hrulefill \\
+    }
+    
+    \newcommand{\header} [1] {
+        {\hspace*{-18pt}\vspace*{6pt} \textsc{#1}}
+        \vspace*{-6pt} \lineunder
+    }
+    
+    \newcommand{\employer}[5]{%
+        \textbf{#1} \hfill #2\\
+        \textit{#3} \hfill #4\\
+        \vspace{-2mm}
+        \begin{itemize} \itemsep 0.5pt
+    	    \item #5
+    	    \checknextargemployer
+        }
+        
+    \newcommand{\skills}[2]{%
+        \begin{tabular}{ l l }
+    	Programming Languages: & #1\\
+    	Technologies:          & #2\\
+        \end{tabular}
+        \vspace{2mm}
+    }
+    
+    \newcommand{\project} [3] {
+        {\textbf{#1}} {\sl #2} \\
+        \vspace{-2mm}
+        \begin{itemize} \itemsep 0.5pt
+    	    \item #3
+    	    \checknextargemployer
+    }
+    
+    \newcommand{\contact} [3] {
+        \vspace*{-10pt}
+        \begin{center}
+            {\Huge \scshape {#1}}\\
+            #2
+        \end{center}
+        \vspace*{-8pt}
+    }
+    
+    \newcommand{\school} [5] {
+        \textbf{#1}\hfill #2\\
+        #3 \hfill #5\\
+        \textit{#4}\\
+        \vspace{2mm}
+    }
+    
+    \newcommand{\award}[2]{
+        \textbf{#1}
+        \hfill #2
+        \vspace*{1mm}\\
+    }
+    % END RESUME DEFINITIONS %%%%%%%%%%%%%%%%%%%%%%%
+
+    \begin{document}
+        \nobibliography*
+        
+        \vspace*{-40pt}
+        
+        %==== Profile ====%
+        \contact{Alex Day}{Grove City, PA $\cdot$ \href{mailto:alex@alexday.me}{alex@alexday.me} $\cdot$ (724) 841-2634 $\cdot$ \href{https://www.alexday.me}{https://www.alexday.me}}
+        
+        %==== Research Objectives ====%
+        
+        %==== Education ====%
+        \header{Education}
+        \school{Clarion University of Pennsylvania}{Clarion, PA}
+        {B.S in Computer Science, Minor in Chemistry}{GPA: 3.4/4.0 (3.8/4.0 in Major)}{September 2016 - December 2019}
+        
+        %==== Research Experience ====%
+        \header{Research Experience}
+        
+        \employer{University of Arizona}{Tucson, Arizona}
+                 {CAT Vehicle Research Assistant (REU)}{May 2019 - August 2019}
+                 {Worked within a team to develop a simple way to create autonomous vehicle paths with WebGME for use in a 4th grade robotics curriculum}
+                 {Developed a verification server in Flask that performed reachability analysis on a given path to ensure code safety}
+                 {Prepared and presented research at the UROC conference at the University of Arizona}
+        		 {Extensively tested the project in both simulation and on the Cognitive and Autonomous Test (CAT) Vehicle}
+        		 
+        %==== Publications ====%
+        \header{Publications}
+        \begin{itemize}
+            \item \href{https://www.alexday.me/assets/pdf/extractive.pdf}{\bibentry{day:pacise:19}}
+        \end{itemize}
+        
+        %==== Talks ====%
+        \header{Talks}
+        \begin{itemize}
+            \item \href{https://www.alexday.me/assets/pdf/PennYorkAbstract.pdf}{\bibentry{sentence_compression_penn_york}}
+            \item{\bibentry{vex}}
+            \item{\bibentry{github}}
+            \item{\bibentry{unittest}}
+        \end{itemize}
+        
+        %==== Poster Presentations ====%
+        \header{Poster Presentations}
+        \begin{itemize}
+            \item \bibentry{DSML4Kidz} 
+        \end{itemize}
+        
+        \header{Projects}
+
+        \project{Automatic Text Summarization}{Python, NLTK}
+                {Compared common algorithms used in automatic text summarization including TF-IDF, TextRank, and other vector embedding techniques}
+                {Gave a talk and published this project at PACISE 2019}
+                
+        \project{Sentence to Emoji Translation}{Python, Spacy, NLTK}
+                {Devised an algorithm that produces a representative sequence of Emojis for a given input sentence}
+                {Implemented algorithms for efficient sentence partitioning using syntax trees}
+                {Gave a talk on this project at the Penn York undergraduate conference}
+                
+        %==== Work Experience ====%
+        \header{Work Experience}
+        
+        \employer{Komatsu Mining Ltd.}{Franklin, PA}
+                 {Student Engineer}{May 2018 - August 2018 and December 2018 - January 2019}
+                 {Implemented a logging management tool in C\# to be used on all Komatsu Mining equipment}
+                 {Created data analysis tools in Excel VBA and Python to assist with debugging of all mining machines}
+                 {Augmented the Longwall Shearer test bed with a power-cycle scheduler built on the Raspberry Pi platform}
+                 
+        \newpage
+        \employer{Clarion University Library}{Clarion, PA}
+                 {Lab Manager}{Feb 2018 - Present}
+                 {Devise scripts in Python to improve automatic logging of library items}
+                 {Supervise a group of 10 student workers providing IT assistance to library patrons}
+        
+        \employer{Clarion University}{Clarion, PA}
+                 {Tutor}{Feb 2018 - May 2019}
+                 {Retaught students complex topics from all levels of courses}
+                 {Assisted with office hours for Intro to Programming II (C\#) \& Object Oriented (Java) classes}
+        
+        \header{Skills}
+        \vspace*{2pt}
+        \skills{Python, Java, C\#, C/C++, HTML/JavaScript/CSS}
+               {\LaTeX, Git, Robot Operating System (ROS), Gazebo, Flask, WebGME, dReach, SQL}
+        
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % LEADERSHIP AND INVOLVEMENT %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \header{Leadership and Involvement}
+        
+         \textbf{Association of Information Technology Professionals} \hfill Clarion, PA\\
+            \hfill Aug 2016 - Present\\
+            \vspace{-3mm}
+        
+        \employer{}{}
+                 {President}{Aug 2018 - May 2019}
+                 {Handle all of club's administrative responsibilities}
+                 {Organize travel to and from conferences and contests}
+                 {Hosted multiple hour long seminars on topics including version control and robotics}
+        \vspace{-6mm}
+        \employer{}{}
+                 {Vice President}{Aug 2017 - May 2018}
+                 {Assisted President in running weekly meetings to update members on activities of the group}
+                 {Worked with treasurer to balance club's finances}
+                 {Hosted multiple hour long seminars on topics including version control and unit testing}
+                 
+        \employer{Clarion University Programming Team}{Clarion, PA}
+                 {Member}{Aug 2017 - Present}
+                 {Competed at multiple programming competitions all over Pennsylvania}
+                 {Hosted weekly meetings to practice solving a competitive programming algorithms}
+                 
+        \employer{Clarion University Crystallography Contest}{Clarion, PA}
+                 {Seminar Assistant and Founder}{Aug 2017 - May 2018}
+                 {Taught elementary school students about crystallography in a lab-like setting during seminars}
+                 {Formalized contest's rules along with other members}
+                 {Assisted with creation of the contest's website}
+        
+        %%%%%%%%%%
+        % AWARDS %
+        %%%%%%%%%%
+        
+        \header{Awards}
+            \award{Clarion University CIS Dept. Student of the Month}{December 2019}
+            \award{Dean's List}{Fall 2018, Spring 2019}
+            \award{Elizabeth Ross AITP Scholarship}{2018, 2019}
+            \award{George Lewis Scholarship}{2018, 2019}
+            \award{Joy Scholarship}{2016}
+        
+        \bibliographystyle{plain}
+        \nobibliography{pubs}
+
+    \end{document}

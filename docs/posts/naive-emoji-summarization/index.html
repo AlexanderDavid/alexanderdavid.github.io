@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Naive Sentence to Emoji Translation :: Alex Day</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Motivation   My senior capstone project for my computer science degree is research focused on summarizing sentences. My group mate and I decided to try and accomplish this by converting sentences into Emoji. We think that this will produce a more information-dense string. This problem is rather similar to a plethora of different problems in computer science and other, unrelated, domains. Within computer science, it is adjacent to the Emoji prediction and Emoji embedding problems." />
+<meta name="keywords" content="Coding, PhD, Clemson" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/posts/naive-emoji-summarization/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/green.css">
+
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  <meta name="twitter:site" content="" />
+
+<meta name="twitter:creator" content="" />
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Naive Sentence to Emoji Translation :: Alex Day">
+<meta property="og:description" content="A simple algorithm for translating sentences into Emoji" />
+<meta property="og:url" content="/posts/naive-emoji-summarization/" />
+<meta property="og:site_name" content="Naive Sentence to Emoji Translation" />
+
+  
+    <meta property="og:image" content="/favicon.ico">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2019-10-07 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+<link rel="manifest" href="/manifest.json">
+
+
+<script type="text/javascript">
+    if('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('/sw.js', { scope: '/' })
+            .then(function(registration) {
+                console.log('Service Worker Registered');
+            });
+
+        navigator.serviceWorker
+            .ready
+            .then(function(registration) {
+                console.log('Service Worker Ready');
+            });
+    }
+</script>
+
+
+</head>
+<body class="">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Alex Day
+  </div>
+</a>
+
+    </div>
+    <div class="menu-trigger">menu</div>
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/posts">Posts</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+        
+          <li><a href="/papers">Papers</a></li>
+        
+      
+        
+          <li><a href="/talks">Talks</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/posts">Posts</a></li>
+      
+    
+      
+        <li><a href="/projects">Projects</a></li>
+      
+    
+      
+        <li><a href="/papers">Papers</a></li>
+      
+    
+      
+        <li><a href="/talks">Talks</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/posts/naive-emoji-summarization/">Naive Sentence to Emoji Translation</a></h1>
+  <div class="post-meta">
+      
+    <span class="post-date">
+      2019-10-07
+    </span>
+    
+    
+  </div>
+
+  
+  <span class="post-tags">
+    
+    #<a href="/tags/capstone_project/">Capstone_Project</a>&nbsp;
+    
+    #<a href="/tags/nlp/">NLP</a>&nbsp;
+    
+  </span>
+  
+
+  
+
+  <div class="post-content"><div>
+        
+<h2 id="headline-1">
+Motivation
+</h2>
+<p>
+My senior capstone project for my computer science degree is research focused on
+summarizing sentences. My group mate and I decided to try and accomplish this by
+converting sentences into Emoji. We think that this will produce a more
+information-dense string. This problem is rather similar to a plethora of
+different problems in computer science and other, unrelated, domains. Within
+computer science, it is adjacent to the Emoji prediction and Emoji embedding
+problems. Outside of our domain, it is similar to problems involving
+translations to, and from, ideographic languages. This algorithm is the first
+shot at implementation after a short-ish literature review.
+</p>
+<h2 id="headline-2">
+Methodology
+</h2>
+<p>
+Before the rest of the algorithm is explained, it is important to understand the
+underlying technology. sent2vec is a model that is used to generate a vector
+embedding of a sentence. This vector embedding is an array containing 700 floats
+that place the meaning of the sentence into a vector space. The main use of
+sent2vec in this algorithm is to determine the closeness of two sentences using
+the <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a>.
+</p>
+<p>
+The general idea behind the algorithm is that a sentence can be split into a
+series of n-grams such that each n-gram maximizes the cosine similarity between
+itself and an Emoji definition in the sent2vec vector space. For example: the
+sentence <code>&#34;Christmas music rings from the clock tower&#34;</code> may be split into the
+following n-grams: <code>[&#39;Christmas&#39;, &#39;music&#39;, &#39;ring&#39;, &#39;from the clock tower&#39;]</code> with
+these individual n-grams being close in the sent2vec space to the following
+Emoji <code>[&#34;🎄&#34;, &#34;🎻&#34;, &#34;💍&#34;, &#34;🏫&#34;]</code>. Currently, each possible combination of
+n-grams is generated and queried to see which combination gives the lowest
+average cosine distance.
+</p>
+<h2 id="headline-3">
+Algorithm
+</h2>
+<p>
+The actual algorithm contains three main parts. First, Emoji are loaded into a
+list of 2-tuples with the values of the pair being the Emoji and vector
+representation of that Emoji description. The Emoji descriptions were acquired
+from the <a href="https://github.com/uclnlp/emoji2vec/blob/master/data/raw_training_data/emoji_joined.txt">emoji_joined.txt</a> file found in the data dir in the <a href="https://github.com/uclmr/emoji2vec">emoji2vec repo</a>. The
+sent2vec model is the <code>wiki_unigrams</code> model found in the <a href="https://github.com/epfml/sent2vec">sent2vec repo</a>.
+</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Define the array to store the (emoji, repr) 2-tuple</span>
+emoji_embeddings <span style="color:#f92672">=</span> []
+<span style="color:#75715e"># Open the file that stores the emoji, description 2-tuple list</span>
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;emoji_joined.txt&#34;</span>) <span style="color:#66d9ef">as</span> emojis:
+    <span style="color:#66d9ef">for</span> defn <span style="color:#f92672">in</span> emojis:
+        <span style="color:#75715e"># The file is tab-delim</span>
+        split <span style="color:#f92672">=</span> defn<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)
+
+        <span style="color:#75715e"># Get the emoji and the description from the current line</span>
+        emoji <span style="color:#f92672">=</span> split[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+        desc <span style="color:#f92672">=</span> split[<span style="color:#ae81ff">0</span>]
+
+        <span style="color:#75715e"># Add each emoji and embedded description to the list</span>
+        emoji_embeddings<span style="color:#f92672">.</span>append((emoji, s2v<span style="color:#f92672">.</span>embed_sentence(desc)))</code></pre></div>
+</div>
+<p>
+The second part of the algorithm is the <code>closest_emoji</code> function. This takes in
+a sentence and returns the Emoji with the most similar description embedding in
+the vector space. This function has the <code>@lru_cache</code> decorator which means the
+last 100 function return values will be cached. This is cleared after each
+summary is finished
+</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@lru_cache</span>(maxsize<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">closest_emoji</span>(sent: str) <span style="color:#f92672">-&gt;</span> Tuple[str, int]:
+    <span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">    Get the closest emoji to the given sentence
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        sent(List[str]): Sentence to check
+</span><span style="color:#e6db74">    Ret:
+</span><span style="color:#e6db74">        (Tuple[str, int]) Closest emoji, the respective cosine similarity
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+
+    <span style="color:#75715e"># Embed the sentence using sent2vec</span>
+    emb <span style="color:#f92672">=</span> s2v<span style="color:#f92672">.</span>embed_sentence(sent)
+
+    <span style="color:#75715e"># Start the lowest cosine at higher than it could ever be</span>
+    lowest_cos <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>_000_000
+
+    <span style="color:#75715e"># The best emoji starts as an empty string placeholder</span>
+    best_emoji <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+
+    <span style="color:#75715e"># Loop through the dictionary</span>
+    <span style="color:#66d9ef">for</span> emoji <span style="color:#f92672">in</span> emoji_embeddings:
+        <span style="color:#75715e"># Get the current emoji&#39;s embedding</span>
+        emoji_emb <span style="color:#f92672">=</span> emoji[<span style="color:#ae81ff">1</span>]
+
+        <span style="color:#75715e"># Check the cosine difference between the emoji&#39;s embedding and</span>
+        <span style="color:#75715e"># the sentence&#39;s embedding</span>
+        curr_cos <span style="color:#f92672">=</span> cosine(emoji_emb, emb)
+
+        <span style="color:#75715e"># If it lower than the lowest then it is the new best</span>
+        <span style="color:#66d9ef">if</span> curr_cos <span style="color:#f92672">&lt;</span> lowest_cos:
+            lowest_cos <span style="color:#f92672">=</span> curr_cos
+            best_emoji <span style="color:#f92672">=</span> emoji[<span style="color:#ae81ff">0</span>]
+
+    <span style="color:#75715e"># Return a 2-tuple containing the best emoji and its cosine differnece</span>
+    <span style="color:#66d9ef">return</span> best_emoji, lowest_cos</code></pre></div>
+</div>
+<p>
+The third (and most important) function in the algorithm is the actual
+summarization function. This function loops through each possible n-gram
+combination and then returns the Emoji, the cosine difference (labeled as
+uncertainty), and the n-grams of the combo with the lowest average cosine
+difference for each n-gram.
+</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">summarize</span>(sent:str) <span style="color:#f92672">-&gt;</span> Tuple[List[str], List[float], List[str]]:
+    <span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">    Summarize the given sentence into emojis
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        sent(str): Sentence to summarize
+</span><span style="color:#e6db74">    Rets:
+</span><span style="color:#e6db74">        (Tuple[List[str], List[float], List[str]]): (Emoji Sentence,
+</span><span style="color:#e6db74">        List of Uncertainty values for the corresponding emoji,
+</span><span style="color:#e6db74">        list of n-grams used to generate the corresponding emoji)
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    <span style="color:#75715e"># Clean the sentence</span>
+    sent <span style="color:#f92672">=</span> clean_sentence(sent)
+
+    <span style="color:#75715e"># Generate all combinations of sentences</span>
+    sent_combos <span style="color:#f92672">=</span> combinations_of_sent(sent)
+    <span style="color:#75715e"># Init &#34;best&#34; datamembers as empty or exceedingly high</span>
+    best_emojis <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+    best_n_grams <span style="color:#f92672">=</span> []
+    best_uncertainties <span style="color:#f92672">=</span> [<span style="color:#ae81ff">100</span>_000_000]
+    <span style="color:#75715e"># Iterate through every combination of sentence combos</span>
+    <span style="color:#66d9ef">for</span> sent_combo <span style="color:#f92672">in</span> sent_combos:
+        <span style="color:#75715e"># Start the local data members as empty</span>
+        emojis <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+        uncertainties <span style="color:#f92672">=</span> []
+        <span style="color:#75715e"># Iterate through each n_gram adding the uncertainty and</span>
+        <span style="color:#75715e"># emoji to the lists</span>
+        <span style="color:#66d9ef">for</span> n_gram <span style="color:#f92672">in</span> sent_combo:
+            close_emoji, cos_diff <span style="color:#f92672">=</span> closest_emoji(n_gram)
+            emojis <span style="color:#f92672">+=</span> close_emoji
+            uncertainties<span style="color:#f92672">.</span>append(cos_diff)
+
+        <span style="color:#75715e"># Check if the average uncertainty is less than the best</span>
+        <span style="color:#75715e"># TODO: Maybe a median check would be helpful as well?</span>
+        <span style="color:#66d9ef">if</span> (sum(uncertainties)<span style="color:#f92672">/</span>len(uncertainties) <span style="color:#f92672">&lt;</span>
+            sum(best_uncertainties)<span style="color:#f92672">/</span>len(best_uncertainties)):
+            <span style="color:#75715e"># Update the best emojis</span>
+            best_emojis <span style="color:#f92672">=</span> emojis
+            best_n_grams <span style="color:#f92672">=</span> sent_combo
+            best_uncertainties <span style="color:#f92672">=</span> uncertainties[:]
+
+    <span style="color:#75715e"># Clear the function cache on closest_emoji because it is unlikely</span>
+    <span style="color:#75715e"># the next run will make use of them</span>
+    closest_emoji<span style="color:#f92672">.</span>cache_clear()
+
+    <span style="color:#75715e"># Return the emoji &#34;sentence&#34;, list of all the cosine similarities,</span>
+    <span style="color:#75715e"># and all of the n-grams</span>
+    <span style="color:#66d9ef">return</span> (best_emojis, best_uncertainties, best_n_grams)</code></pre></div>
+</div>
+<h2 id="headline-4">
+Downsides
+</h2>
+<p>
+The major downfall of this algorithm is the lack of data that it is currently
+using. There are 1661 Emoji in the corpus and only 6088 definitions, which gives
+an average of \(\approx\) 4 definitions per Emoji. When you put that in the context of
+700 dimensional space that&#39;s not much variation. If more data was used the
+vector space would become more populated and each n-gram would have a closer
+Emoji. Putting the limits on the dataset aside this algorithm is still
+incredibly slow. The major flaw of searching every single combination of words
+in a sentence is the time it takes. It&#39;s about 5 seconds for a sentence that is
+6 words long, and the curve it follows after that is not pretty. I can see no
+smart or quick way of speeding this up. Maybe genetic algorithms? Maybe harder
+caching? If you have any ideas please <a href="mailto:alex@alexday.me">reach out to me</a>.
+</p>
+<h2 id="headline-5">
+Results
+</h2>
+<p>
+Here is a look at some of the more accurate results. The less accurate ones are just garbage.
+</p>
+<table>
+<thead>
+<tr>
+<th>Input Sentence</th>
+<th class="align-right">Similarity</th>
+<th>n-grams</th>
+<th>Output Emojis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>christmas music rings from the clock tower</td>
+<td class="align-right">0.983</td>
+<td><code>christmas</code>, <code>music</code>, <code>ring</code>, <code>from the clock tower</code></td>
+<td>🎄🎻💍🏫</td>
+</tr>
+<tr>
+<td>It isn&#39;t perfect but it is a start</td>
+<td class="align-right">0.818</td>
+<td><code>it is n&#39;t</code>, <code>perfect but it is</code>, <code>a</code>, <code>start</code></td>
+<td>🙅💯💯🌱</td>
+</tr>
+<tr>
+<td>The sun is rising over new york city</td>
+<td class="align-right">0.881</td>
+<td><code>the sun is rising over</code>, <code>new york</code>, <code>city</code></td>
+<td>🌄🗽🚏</td>
+</tr>
+</tbody>
+</table>
+<h2 id="headline-6">
+Conclusion
+</h2>
+<p>
+This algorithm fits some of the requirements we set out to fill but there is
+still so much to be done. For starters the training could be improved. Right now
+we are only training off of short descriptions of the emoji. I think if we
+expanded to more datasets (maybe <a href="http://reddit.com/r/emojipasta">/r/emojipasta</a> or something similar) it
+may have a better shot at transcribing more sentences. Either way it is a good
+jumping off point into the world of English \(\rightarrow\) Emoji translation. The entire
+jupyter notebook that I used for this algorithm is available in this
+<a href="https://github.com/AlexanderDavid/NaiveSentenceEmojiTranslation">github repo</a>.
+</p>
+
+      </div></div>
+  
+  <div class="pagination">
+    <div class="pagination__title">
+      <span
+        class="pagination__title-h">Read other posts</span>
+      <hr />
+    </div>
+    <div class="pagination__buttons">
+      
+      <span class="button previous">
+        <a href="/posts/dependency-tree-collapse/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Dependency Tree Collapse for N-Gram Generation</span>
+        </a>
+      </span>
+      
+      
+      <span class="button next">
+        <a href="/posts/tf-idf/">
+          <span class="button__text">TF-IDF and Document Summarization</span>
+          <span class="button__icon">→</span>
+        </a>
+      </span>
+      
+    </div>
+  </div>
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>© 2020 Alex Day</span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
