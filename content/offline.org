@@ -1,0 +1,4 @@
+#+TITLE: Oops, you are offline.
+#+type: offline
+
+You should try to find some Internet to browse here

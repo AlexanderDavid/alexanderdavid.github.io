@@ -12,3 +12,7 @@
         width: 66%;
     }
 }
+
+.summary {
+    color: var(--color)
+}

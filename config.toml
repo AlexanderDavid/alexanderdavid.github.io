@@ -11,7 +11,7 @@ paginate = 5
   themeColor = "green"
 
   # if you set this to 0, only submenu trigger will be visible
-  showMenuItems = 4
+  showMenuItems = 5
 
   # show selector to switch language
   showLanguageSelector = false
@@ -57,12 +57,17 @@ paginate = 5
         identifier = "posts"
         name = "Posts"
         url = "/posts"
-	weight = 2
+        weight = 2
       [[languages.en.menu.main]]
         identifier = "about"
         name = "About"
         url = "/about"
-	weight = 1
+        weight = 1
+      [[languages.en.menu.main]]
+        identifier = "projects"
+        name = "Projects"
+        url = "/projects"
+        weight = 3
       [[languages.en.menu.main]]
         identifier = "papers"
         name = "Papers"

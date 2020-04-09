@@ -1,5 +1,0 @@
-#+draft: false
-#+type: static
-**Hi**, I'm Alex Day. I am an incoming Ph.D. student at
-  [[https://clemson.edu][Clemson University]]. This is a place for me to collect my ramblings and
-  acomplishments.

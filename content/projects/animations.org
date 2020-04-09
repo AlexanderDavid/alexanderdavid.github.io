@@ -1,0 +1,18 @@
+#+TITLE: Animations
+#+date: 2019-10-12
+#+description: A couple of animations written in Javascript and Python
+
+* Constellations
+This is animation is based on the animation found [[http://slicker.me/javascript/particles.htm][here]]. However, I wrote this
+program as an excuse to try out TypeScript so I made it object oriented instead
+of trying to do it in as few lines as possible. Check it out on [[https://github.com/AlexanderDavid/ConstellationAnimation][GitHub]].
+{{< image src="/img/stars.gif" alt="Hello Friend" position="center" style="margin-top: 10px; border-radius: 8px;" >}}
+
+* Collatz Conjecture Visualized
+This is my take on the Coding Train's Coding in the [[https://thecodingtrain.com/CodingInTheCabana/002-collatz-conjecture.html][Cabana Collatz Conjecture]].
+My version is using Python and the Python P5 library. The basis of the code is
+that it generates each Collatz series from 10 to 10,000, reverses them, and then
+draws each series as a line that goes left if the current number is odd and
+right if it is even. This leads to some interesting patterns. The code is on my
+[[https://github.com/AlexanderDavid/Collatz-Conjecture-Visualization][my GitHub]], and a gif showing the animation is below.
+{{< image src="/img/collatz.gif" alt="Hello Friend" position="center" style="margin-top: 10px; border-radius: 8px;" >}}
