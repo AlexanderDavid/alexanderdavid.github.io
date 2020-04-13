@@ -5,14 +5,29 @@
         <!-- Note that the content for index.html, as a sort of list page, will pull from content/_index.md -->
         {{.Content}}
       </div>
-      <div>
 
+      <div>
         <h1>Recent Blog Posts</h1>
-        {{ range first 10 (where .Site.RegularPages "Type" "posts") }}
-        <li>
-            <a href="{{.Permalink}}">{{.Date.Format "2006-01-02"}} | {{.Title}}</a>
-        </li>
-    {{ end }}
+        <ul>
+          {{ range first 10 (where .Site.RegularPages "Type" "posts") }}
+            <li>
+                <a href="{{.Permalink}}">{{.Date.Format "2006-01-02"}} - {{.Title}}</a>
+            </li>
+          {{ end }}
+        </ul>
       </div>
+
+      <div>
+        <h1>News</h1>
+        <ul>
+          {{ range first 10 (where .Site.RegularPages "Type" "news") }}
+            <li>
+              <span>{{.Date.Format "2006-01-02"}} - {{.Summary}}</span>
+            </li>
+          {{ end }}
+        </ul>
+      </div>
+      
     </main>
+
 {{ end }}

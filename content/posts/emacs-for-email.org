@@ -1,0 +1,8 @@
+#+title: Emacs for Email
+#+date: 2020-04-12T15:35:54-04:00
+
+For the past couple of months I have been trying to optimize my email workflow.
+My thoughts were that if I can move my email into a more streamlined application
+then I will also become more streamlined. This quarantine has been a perfect
+time for me to switch all of my habits over. I began this journey back in
+January by using Luke Smith's [[https://github.com/LukeSmithxyz/mutt-wizard][Mutt Wizard]] to set up a

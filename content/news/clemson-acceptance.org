@@ -1,0 +1,3 @@
+#+title: "Clemson Acceptance"
+#+date: 2020-03-13
+#+summary: Accepted into Clemson University's computer science PhD program.
