@@ -1,8 +1,223 @@
 #+title: Emacs for Email
 #+date: 2020-04-12T15:35:54-04:00
+#+tags[]: email, emacs
+#+description: An overview of the config files and programs I use to access email in emacs
 
-For the past couple of months I have been trying to optimize my email workflow.
-My thoughts were that if I can move my email into a more streamlined application
-then I will also become more streamlined. This quarantine has been a perfect
-time for me to switch all of my habits over. I began this journey back in
-January by using Luke Smith's [[https://github.com/LukeSmithxyz/mutt-wizard][Mutt Wizard]] to set up a
+Email management, when heavily abstracted, is simple. To start reading
+email offline on your own PC you need three programs:
+- Sync email to/from IMAP server (~OfflineIMAP~)
+- Manage email on your PC (~mu~ and ~mu4e~)
+- Send email (~msmtp~)
+Once these three parts are working together then email can be downloaded,
+viewed, and replied to. Getting these programs working is no easy task, however.
+
+My motivation in doing this was the end goal of easily ~org capture~-ing my
+emails and adding them to my master ~todo.org~ file. I thought that by keeping
+all of my actionable tasks in one central place I could be more productive. Time
+will tell if that assumption is true.
+
+* OfflineIMAP
+~OfflineIMAP~ is a tool written in python to facilitate the downloading and
+uploading of mail from an IMAP server. There are other programs for doing this
+(namely, [[https://wiki.archlinux.org/index.php/Isync][~mbsync~]]), but I chose ~OfflineIMAP~ because it was the easiest for me
+to setup, didn't have any weird certificate errors with gmail, and I could
+extend it easily with python.
+
+My ~OfflineIMAP~ setup uses two gmail accounts. However, for the sake of
+brevity, I have trimmed it down to just use one. The whole
+configuration is in my [[https://github.com/AlexanderDavid/dotfiles][dotfiles]] repository.
+
+To store passwords on the command line I use the [[https://wiki.archlinux.org/index.php/Pass][~pass~]] password manager.
+To access the passwords from ~OfflineIMAP~ I included the following function in
+the main configuration so I could just call the function to get the passwords
+for my account. One thing to note is that if you have 2fa enabled on a Gmail
+account you will need to use an [[https://support.google.com/accounts/answer/185833?hl=en][app password]] to login with ~OfflineIMAP~.
+#+BEGIN_SRC python
+# ~/.config/offlineimap/pass.py
+#! /usr/bin/env python3
+from subprocess import check_output
+
+def get_pass(account):
+        return check_output("pass mail/" + account, shell=True).splitlines()[0]
+#+END_SRC
+
+I dislike the ~[Gmail].~ prefix that ~OfflineIMAP~ downloads the folders from
+the server with by default. To solve this I use a python lambda function to both
+remove the prefix and rename the ~Sent Mail~ to just ~Sent~ to make my folder
+structure cleaner.
+#+BEGIN_SRC python
+# ~/.config/offlineimap/config:22
+nametrans = lambda f: f.replace('[Gmail]/', '').replace("Sent Mail", "Sent") \
+                      if f.startswith('[Gmail]/') else f
+#+END_SRC
+
+On top of renaming some folders I also disabled some of the folders I don't use
+in Gmail's settings. You can do this by going to ~settings~ \rightarrow ~Labels~.
+
+{{< image src="/img/gmail-imap-settings.png" alt="Gmail IMAP settings to simplify the IMAP folder structure" position="center" style="border-radius: 8px;" >}}
+
+All in all my ~OfflineIMAP~ config file is simple. If you are looking for a more
+verbose version you can find one at ~/usr/share/offlineimap/offlineimap.conf~
+once ~OfflineIMAP~ is installed.
+#+BEGIN_SRC toml
+# ~/.config/offlineimap/config
+[general]
+ui = ttyui
+accounts = Clemson
+# Include python password function
+pythonfile = ~/.config/offlineimap/pass.py
+
+[Account Clemson]
+localrepository = Clemson-Local
+remoterepository = Clemson-Remote
+
+[Repository Clemson-Local]
+type = Maildir
+localfolders = ~/.local/share/mail/clemson
+
+[Repository Clemson-Remote]
+type = Gmail
+remoteuser = adday@g.clemson.edu
+remotepasseval = get_pass("clemson")
+realdelete = no
+maxconnections = 5
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+nametrans = lambda f: f.replace('[Gmail]/', '').replace("Sent Mail", "Sent") if f.startswith('[Gmail]/') else f
+#+END_SRC
+
+
+One of the only problems I have with ~OfflineIMAP~ is its' speed. To do the
+initial download of the 130,000-odd
+emails I have in my main Gmail account it took around 4 hours. However, after
+this initial sync the time required went down to about a 40 seconds for two
+accounts. 
+
+Once you have ~OfflineIMAP~ set up you can run ~offlineimap~ to sync everything,
+supply the ~-a~ flag with a specific account to just sync that account.
+* mu/mu4e
+~mu~ is a super fast mail indexer that comes with ~mu4e~ which is an email
+client for emacs. Both of them work together to allow a powerful, search based
+email interface that is keyboard-driven. When you first start it up you will see
+a relatively bare main menu.
+
+{{< image src="/img/mu4e-main-menu.png" alt="mu4e main menu" position="center" style="border-radius: 8px;" >}}
+
+From there you can jump to your inbox and start reading and replying to mail.
+There are videos that can explain ~mu4e~ a lot better than I can so if you need
+an intro I would recommend [[https://www.youtube.com/watch?v=newRHXKm4H4][Mike Zamansky's mu4e video]].
+
+I use [[https://github.com/hlissner/doom-emacs][doom emacs]] and I haven't tested this config in vanilla emacs so I cannot
+guarentee that this will work but I can see no reason why it wouldnt. Basicelly
+this config sets up a mail account with specific folders for the mail. It also
+sets up ~msmtp~ as the mechanism to send a message.
+#+BEGIN_SRC emacs-lisp
+;; ~/.doom.d/config.el
+(require 'mu4e)
+
+;; use mu4e for e-mail in emacs
+(setq mail-user-agent 'mu4e-user-agent)
+(setq mu4e-maildir "/home/alex/.local/share/mail")
+
+;; default
+(setq mu4e-contexts
+    `( ,(make-mu4e-context
+        :name "clemson"
+        :enter-func (lambda ()
+                        (mu4e-message "Entering Clemson context")
+                        ;; Quicky jump to/move a mail to different folders
+                        (setq mu4e-maildir-shortcuts  '( ("/clemson/INBOX"   . ?i)
+                                                         ("/clemson/Sent"    . ?s)
+                                                         ("/clemson/Trash"   . ?t)
+                                                         ("/clemson/All Mail". ?a)
+                                                         ("/clemson/archive" . ?r))))
+        :leave-func (lambda ()
+                        (mu4e-message "Leaving Clemson context"))
+        :match-func (lambda (msg)
+                        (when msg
+                            ;; Clemson has two valid emails for each student
+                            (or (mu4e-message-contact-field-matches msg
+                                    :to "adday@clemson.edu")
+                                (mu4e-message-contact-field-matches msg
+                                    :to "adday@g.clemson.edu"))))
+
+        :vars '( ( user-mail-address      . "adday@clemson.edu"  )
+                 ( user-full-name         . "Alex Day" )
+                 ( mu4e-drafts-folder     . "/clemson/Drafts")
+                 ( mu4e-sent-folder       . "/clemson/Sent")
+                 ( mu4e-trash-folder      . "/clemson/Trash")
+                 ( mu4e-refile-folder     . "/clemson/archive" )
+                 ( mu4e-compose-signature . (concat "Alex Day"))))))
+
+
+;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+(setq mu4e-sent-messages-behavior 'delete)
+
+;; allow for updating mail using 'U' in the main view:
+(setq mu4e-get-mail-command "offlineimap")
+
+(setq message-send-mail-function 'message-send-mail-with-sendmail)
+(setq sendmail-program "/usr/bin/msmtp")
+;; tell msmtp to choose the SMTP server by the 'from' field in the outgoing email
+(setq message-sendmail-extra-arguments '("--read-envelope-from"))
+(setq message-sendmail-f-is-evil 't)
+#+END_SRC
+
+As well as just reading messages in emacs I also wanted some way of capturing
+messages with org-capture. To do this I set up a capture template that I could
+use while either in a message or hovering over a message on the ~mu4e~ search.
+#+BEGIN_SRC emacs-lisp
+(require 'org-mu4e)
+(setq org-capture-templates
+        ("e" "Email Todo" entry (file+headline "~/doc/org/todo.org" "Inbox")
+         "* TODO %?\nProcess mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \"+2d\"))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a" :prepend t))
+#+END_SRC
+* msmtp
+I use ~msmtp~ to send emails from ~mu4e~. It handles multiple email addresses by
+reading the 'from' field that ~mu4e~ sends along with the email. This program is
+the only one I have had absolutely no problems with.
+#+BEGIN_SRC python
+# ~/.config/msmtp/config
+defaults
+auth on
+tls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile ~/.config/msmtp/msmtp.log
+
+account clemson
+host smtp.gmail.com
+port 587
+from adday@clemson.edu
+user adday@g.clemson.edu
+passwordeval "pass mail/clemson"
+
+account default : clemson
+#+END_SRC
+* Show Unread Mail in the Statusbar
+I use this script to display the number of unread emails in my status bar. I use
+[[https://tools.suckless.org/slstatus/][slstatus]] with the [[https://dwm.suckless.org/patches/status2d/][status2d]] patch for [[https://dwm.suckless.org/][dwm]] to allow colors in the status bar. It
+should be plug and play if you change the directory it looks for new mail in and
+have font-awesome installed for the mailbox icon.
+#+BEGIN_SRC bash
+#!/usr/bin/env sh
+
+# Get the number of new mails in all INBOX folders
+NEWMAILS=$(du -a ~/.local/share/mail/*/INBOX/new/* 2>/dev/null | wc -l)
+
+# Print the number of new mails to the statusbar if there are any
+if [ "$NEWMAILS" -gt 0 ]; then
+    printf "^b%s^" $(xgetres slstatus.color2)
+    printf "^c%s^" $(xgetres slstatus.background)
+    printf " ﯬ %s" $NEWMAILS
+else
+    # If there are no new mails then print a block the same color
+    # as the background. This is because slstatus will show the previous
+    # color if it is not overwriten
+    printf "^c%s^^b%s^placeholder^d^" $(xgetres slstatus.background) $(xgetres slstatus.background)
+fi
+#+END_SRC
+* Conclusions
+I have been reading and writing emails this way for the past couple of weeks and
+I could be happier. Namely I haven't really researched how to attach files to
+email and when sending emails back and forth from two accounts that ~mu4e~ is
+tracking it can get a little confusing. Apart from that, however, I am
+satisfied with the workflow that these config files set up.
