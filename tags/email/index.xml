@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>email, on Alex Day</title>
+    <link>/tags/email/</link>
+    <description>Recent content in email, on Alex Day</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>© 2020 Alex Day</copyright>
+    <lastBuildDate>Sun, 12 Apr 2020 15:35:54 -0400</lastBuildDate>
+    
+	<atom:link href="/tags/email/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Emacs for Email</title>
+      <link>/posts/emacs-for-email/</link>
+      <pubDate>Sun, 12 Apr 2020 15:35:54 -0400</pubDate>
+      
+      <guid>/posts/emacs-for-email/</guid>
+      <description>Email management, when heavily abstracted, is simple. To start reading email offline on your own PC you need three programs:    Sync email to/from IMAP server (OfflineIMAP)    Manage email on your PC (mu and mu4e)    Send email (msmtp)    Once these three parts are working together then email can be downloaded, viewed, and replied to. Getting these programs working is no easy task, however.</description>
+    </item>
+    
+  </channel>
+</rss>

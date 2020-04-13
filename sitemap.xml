@@ -4,7 +4,42 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-12-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/emacs/</loc>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/emacs-for-email/</loc>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/email/</loc>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/posts/</loc>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-04-12T15:35:54-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/news/clemson-acceptance/</loc>
+    <lastmod>2020-03-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/news/</loc>
+    <lastmod>2020-03-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -14,6 +49,11 @@
   
   <url>
     <loc>/projects/</loc>
+    <lastmod>2019-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/news/clarion-graduation/</loc>
     <lastmod>2019-12-13T00:00:00+00:00</lastmod>
   </url>
   
@@ -29,16 +69,6 @@
   
   <url>
     <loc>/tags/nlp/</loc>
-    <lastmod>2019-11-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
-    <lastmod>2019-11-06T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
     <lastmod>2019-11-06T00:00:00+00:00</lastmod>
   </url>
   

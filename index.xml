@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>© 2020 Alex Day</copyright>
-    <lastBuildDate>Fri, 13 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Apr 2020 15:35:54 -0400</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Emacs for Email</title>
+      <link>/posts/emacs-for-email/</link>
+      <pubDate>Sun, 12 Apr 2020 15:35:54 -0400</pubDate>
+      
+      <guid>/posts/emacs-for-email/</guid>
+      <description>Email management, when heavily abstracted, is simple. To start reading email offline on your own PC you need three programs:    Sync email to/from IMAP server (OfflineIMAP)    Manage email on your PC (mu and mu4e)    Send email (msmtp)    Once these three parts are working together then email can be downloaded, viewed, and replied to. Getting these programs working is no easy task, however.</description>
+    </item>
+    
+    <item>
+      <title>&#34;Clemson Acceptance&#34;</title>
+      <link>/news/clemson-acceptance/</link>
+      <pubDate>Fri, 13 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/news/clemson-acceptance/</guid>
+      <description>Accepted into Clemson University&amp;#39;s computer science PhD program.</description>
+    </item>
     
     <item>
       <title>Emoji Summarization</title>
@@ -19,6 +37,15 @@
       
       <guid>/projects/emoji/</guid>
       <description>For my senior year capstone project at Clarion University I worked with another student to try and summarize sentences by producing a string of emojis. We accomplished this goal through the use of vector embeddings. Both the initial and final algorithms are explained in blog posts, as well as a novel sentence segmentation algorithm that was developed as a consequence of the project. We presented this project at the Penn York conference(slides, abstract) in Clarion and published a paper at the 2020 PACISE conference.</description>
+    </item>
+    
+    <item>
+      <title>Undergraduate Graduated</title>
+      <link>/news/clarion-graduation/</link>
+      <pubDate>Fri, 13 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/news/clarion-graduation/</guid>
+      <description>Graduated cum laude from Clarion University with a B.S. in computer science and a minor in chemistry.</description>
     </item>
     
     <item>
