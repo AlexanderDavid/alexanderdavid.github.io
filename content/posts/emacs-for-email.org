@@ -1,11 +1,12 @@
 #+title: Emacs for Email
-#+date: 2020-04-12T15:35:54-04:00
+#+date: 2020-04-12
+#+updated: 2020-05-05
 #+tags[]: email, emacs
 #+description: An overview of the config files and programs I use to access email in emacs
 
 Email management, when heavily abstracted, is simple. To start reading
 email offline on your own PC you need three programs:
-- Sync email to/from IMAP server (~OfflineIMAP~)
+- Sync email to/from IMAP server (~mbsync~)
 - Manage email on your PC (~mu~ and ~mu4e~)
 - Send email (~msmtp~)
 Once these three parts are working together then email can be downloaded,
@@ -16,39 +17,33 @@ emails and adding them to my master ~todo.org~ file. I thought that by keeping
 all of my actionable tasks in one central place I could be more productive. Time
 will tell if that assumption is true.
 
-* OfflineIMAP
-~OfflineIMAP~ is a tool written in python to facilitate the downloading and
+* mbsync
+~mbsync~ is a tool written in python to facilitate the downloading and
 uploading of mail from an IMAP server. There are other programs for doing this
-(namely, [[https://wiki.archlinux.org/index.php/Isync][~mbsync~]]), but I chose ~OfflineIMAP~ because it was the easiest for me
-to setup, didn't have any weird certificate errors with gmail, and I could
-extend it easily with python.
+(namely, [[https://wiki.archlinux.org/index.php/OfflineIMAP][~OfflineIMAP~]]), but I chose ~mbsync~ because it was the easiest for me
+to setup, didn't have any weird certificate errors with gmail, and it was
+incredibly fast.
 
-My ~OfflineIMAP~ setup uses two gmail accounts. However, for the sake of
+My ~mbsync~ setup uses two gmail accounts. However, for the sake of
 brevity, I have trimmed it down to just use one. The whole
 configuration is in my [[https://github.com/AlexanderDavid/dotfiles][dotfiles]] repository.
 
 To store passwords on the command line I use the [[https://wiki.archlinux.org/index.php/Pass][~pass~]] password manager.
-To access the passwords from ~OfflineIMAP~ I included the following function in
-the main configuration so I could just call the function to get the passwords
-for my account. One thing to note is that if you have 2fa enabled on a Gmail
-account you will need to use an [[https://support.google.com/accounts/answer/185833?hl=en][app password]] to login with ~OfflineIMAP~.
-#+BEGIN_SRC python
-# ~/.config/offlineimap/pass.py
-#! /usr/bin/env python3
-from subprocess import check_output
+To access a command line password manager ~mbsync~ uses the ~PassCmd~ setting to
+define a command that will return the password. I use [[https://github.com/cruegge/pam-gnupg][pam gnupg]] program to
+unlock my gnupg key on login I do not have to keep entering my GPG password to
+provide my email password to ~mbsync~.
 
-def get_pass(account):
-        return check_output("pass mail/" + account, shell=True).splitlines()[0]
-#+END_SRC
+I dislike the ~[Gmail].~ prefix that all folders have when downloaded by
+default. To solve this problem I have a channel for each of the folders I
+download and I can give each of them an explicit file name. For example,
+"[Gmail].Sent Mail" is renamed to sent in the configuration snippet below.
 
-I dislike the ~[Gmail].~ prefix that ~OfflineIMAP~ downloads the folders from
-the server with by default. To solve this I use a python lambda function to both
-remove the prefix and rename the ~Sent Mail~ to just ~Sent~ to make my folder
-structure cleaner.
-#+BEGIN_SRC python
-# ~/.config/offlineimap/config:22
-nametrans = lambda f: f.replace('[Gmail]/', '').replace("Sent Mail", "Sent") \
-                      if f.startswith('[Gmail]/') else f
+#+BEGIN_SRC toml
+Channel sync-gmail-sent
+Master :gmail-remote:"[Gmail]/Sent Mail"
+Slave :gmail-local:sent
+Create Slave
 #+END_SRC
 
 On top of renaming some folders I also disabled some of the folders I don't use
@@ -56,44 +51,65 @@ in Gmail's settings. You can do this by going to ~settings~ \rightarrow ~Labels~
 
 {{< image src="/img/gmail-imap-settings.png" alt="Gmail IMAP settings to simplify the IMAP folder structure" position="center" style="border-radius: 8px;" >}}
 
-All in all my ~OfflineIMAP~ config file is simple. If you are looking for a more
-verbose version you can find one at ~/usr/share/offlineimap/offlineimap.conf~
-once ~OfflineIMAP~ is installed.
-#+BEGIN_SRC toml
-# ~/.config/offlineimap/config
-[general]
-ui = ttyui
-accounts = Clemson
-# Include python password function
-pythonfile = ~/.config/offlineimap/pass.py
+All in all my ~mbsync~ config file is simple. If you are looking for more
+information about how to set up ~mbsync~ you can find it on the [[https://wiki.archlinux.org/index.php/Isync][Arch Wiki]].
+#+BEGIN_SRC yaml
+IMAPAccount gmail
+Host imap.gmail.com
+User alexday135@gmail.com
+PassCmd "pass mail/gmail"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
 
-[Account Clemson]
-localrepository = Clemson-Local
-remoterepository = Clemson-Remote
+IMAPStore gmail-remote
+Account gmail
 
-[Repository Clemson-Local]
-type = Maildir
-localfolders = ~/.local/share/mail/clemson
+MaildirStore gmail-local
+Subfolders Verbatim
+Path ~/.local/share/mail/gmail/
+Inbox ~/.local/share/mail/gmail/INBOX
 
-[Repository Clemson-Remote]
-type = Gmail
-remoteuser = adday@g.clemson.edu
-remotepasseval = get_pass("clemson")
-realdelete = no
-maxconnections = 5
-sslcacertfile = /etc/ssl/certs/ca-certificates.crt
-nametrans = lambda f: f.replace('[Gmail]/', '').replace("Sent Mail", "Sent") if f.startswith('[Gmail]/') else f
+Channel sync-gmail-default
+Master :gmail-remote:
+Slave :gmail-local:
+Patterns "INBOX"
+
+# Create missing folders everywhere
+SyncState *
+
+Channel sync-gmail-sent
+Master :gmail-remote:"[Gmail]/Sent Mail"
+Slave :gmail-local:sent
+Create Slave
+
+Channel sync-gmail-archive
+Master :gmail-remote:"archive"
+Slave :gmail-local:archive
+Create Slave
+
+Channel sync-gmail-drafts
+Master :gmail-remote:"[Gmail]/Drafts"
+Slave :gmail-local:drafts
+Create Slave
+
+Channel sync-gmail-trash
+Master :gmail-remote:"[Gmail]/Trash"
+Slave :gmail-local:trash
+Create Slave
+
+# Get all the channels together into a group.
+Group gmail
+Channel sync-gmail-default
+Channel sync-gmail-sent
+Channel sync-gmail-trash
+Channel sync-gmail-drafts
+Channel sync-gmail-archive
 #+END_SRC
 
+Once ~mbsync~ is set and the root mail folder has been created up you can
+run ~mbsync -a~ to sync all mailboxes or sync a specific account by running
+~mbsync~ followed by the account name.
 
-One of the only problems I have with ~OfflineIMAP~ is its' speed. To do the
-initial download of the 130,000-odd
-emails I have in my main Gmail account it took around 4 hours. However, after
-this initial sync the time required went down to about a 40 seconds for two
-accounts. 
-
-Once you have ~OfflineIMAP~ set up you can run ~offlineimap~ to sync everything,
-supply the ~-a~ flag with a specific account to just sync that account.
 * mu/mu4e
 ~mu~ is a super fast mail indexer that comes with ~mu4e~ which is an email
 client for emacs. Both of them work together to allow a powerful, search based
@@ -126,9 +142,9 @@ sets up ~msmtp~ as the mechanism to send a message.
                         (mu4e-message "Entering Clemson context")
                         ;; Quicky jump to/move a mail to different folders
                         (setq mu4e-maildir-shortcuts  '( ("/clemson/INBOX"   . ?i)
-                                                         ("/clemson/Sent"    . ?s)
-                                                         ("/clemson/Trash"   . ?t)
-                                                         ("/clemson/All Mail". ?a)
+                                                         ("/clemson/sent"    . ?s)
+                                                         ("/clemson/trash"   . ?t)
+                                                         ("/clemson/drafts"  . ?d)
                                                          ("/clemson/archive" . ?r))))
         :leave-func (lambda ()
                         (mu4e-message "Leaving Clemson context"))
@@ -142,9 +158,9 @@ sets up ~msmtp~ as the mechanism to send a message.
 
         :vars '( ( user-mail-address      . "adday@clemson.edu"  )
                  ( user-full-name         . "Alex Day" )
-                 ( mu4e-drafts-folder     . "/clemson/Drafts")
-                 ( mu4e-sent-folder       . "/clemson/Sent")
-                 ( mu4e-trash-folder      . "/clemson/Trash")
+                 ( mu4e-drafts-folder     . "/clemson/drafts")
+                 ( mu4e-sent-folder       . "/clemson/sent")
+                 ( mu4e-trash-folder      . "/clemson/trash")
                  ( mu4e-refile-folder     . "/clemson/archive" )
                  ( mu4e-compose-signature . (concat "Alex Day"))))))
 
@@ -153,7 +169,7 @@ sets up ~msmtp~ as the mechanism to send a message.
 (setq mu4e-sent-messages-behavior 'delete)
 
 ;; allow for updating mail using 'U' in the main view:
-(setq mu4e-get-mail-command "offlineimap")
+(setq mu4e-get-mail-command "mbsync -a")
 
 (setq message-send-mail-function 'message-send-mail-with-sendmail)
 (setq sendmail-program "/usr/bin/msmtp")
