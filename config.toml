@@ -40,7 +40,7 @@ paginate = 5
   [languages.en]
     languageName = "English"
     title = "Alex Day"
-    subtitle = ""
+    subtitle = "A rambling storage system"
     owner = "Alex Day"
     keywords = "Coding, PhD, Clemson"
     copyright = "© 2020 Alex Day"
