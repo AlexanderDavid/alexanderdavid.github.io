@@ -1,0 +1,87 @@
+#+title: GitHub Actions
+#+tags[]: GitHub, CI
+#+date: 2020-05-04
+#+draft: true
+#+description: GitHub's new continuous integration framework is absolutely amazing
+
+Easy code is easy to compile and run. That has and always will be true. However,
+once the code you write spans across multiple classes, files, or even packages
+it can be hard to properly test, compile, and release this software. Continuous
+integration (CI) solves (for some definition of solves) this problem. By defining a
+pipeline of actions to take your code from source to product that run the same
+way every time. Docker (and containerization in general) augments this process
+by providing easy to use clean-slate images that these pipelines can built up
+on. Always starting at the same point and then running the same actions provides
+a stable pipeline that can reliably test, compile, and release a piece of
+software. This, in turn, provides a reliable platform that allows developers to
+more easily solve more problems.
+
+* GitHub Actions
+There are umpteen solutions for continuous integration. This includes [[www.jenkins.io][Jenkins]],
+[[https://cloud.google.com/tekton/][Tekton]], and [[https://github.com/features/actions][GitHub Actions]]. Over the past couple of weeks I have been using
+GitHub Actions (first for work and most recently for this website) and I have
+found that it drastically increases my productivity by reducing the time I spend
+on either producing a wheel, running pytest, or generating and uploading this
+Hugo-driven site.
+
+** Pipeline
+GitHub uses YAML files to define a CI pipeline. A pipeline is a set of actions
+in an explicit order. These actions can either be a command to the operating
+system (e.g. ~echo "Hello World"~ or ~curl www.google.com~) or a group of
+commands developed by someone (e.g. [[https://github.com/actions/checkout][checking out a repo]] or [[https://github.com/peaceiris/actions-hugo][generating a hugo
+site]]). All these actions run on a fresh instance of a virtual machine. There are
+two choices when it comes to these virtual machines. You can either host your
+own virtual machine, or use one that GitHub hosts (GitHub hosted platforms are
+Windows Server 2019, Ubuntu 18.04 and 16.04, and MacOS Catalina).
+
+Below is the pipeline for this site. The pipeline's environment is Ubuntu 18.04 and
+there are four actions this pipeline takes. The first action
+([[https://github.com/actions/checkout][actions/checkout@v2]]) checks the site repo out. Because the definition for this
+workflow is in the [[https://github.com/AlexanderDavid/alexanderdavid.github.io/tree/devel][devel]] branch that is the branch that this action checks out.
+The next action ([[https://www.github.com/peaceiris/actions-hugo][peaceiris/actions-hugo@v2]]) installs Hugo v0.68.3. The site is
+then built using a simple action that executes ~hugo --minify~. This builds the
+site into the ~public~ directory. The last action ([[https://www.github.com/peaceiris/actions-gh-pages][peaceiris/actions-gh-pages]])
+publishes the ~public~ directory into the master branch and adds the CNAME file
+that allows me to use my own domain name.
+
+#+BEGIN_SRC yaml
+# .github/actions/main.yml
+name: Build Hugo
+
+on:
+  push:
+    branches:
+      - devel
+
+jobs:
+  deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.68.3'
+
+      - name: Build
+        run: hugo --minify
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: master
+          cname: www.alexday.me
+#+END_SRC
+
+This is all that GitHub needs to reliably compile and serve my website. Prior to
+this I had to compile the website locally into a different directory and then
+commit and push that to the master branch of the repository. Now I can just
+compile and push to the development branch (something I was already doing) and
+the changes are immediately reflected by my website.
+
+** Secrets
+For some pipelines it is
+** Artifacts
