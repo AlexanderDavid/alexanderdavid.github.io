@@ -1,20 +1,18 @@
 #+title: GitHub Actions
 #+tags[]: GitHub, CI
 #+date: 2020-05-04
-#+draft: true
 #+description: GitHub's new continuous integration framework is absolutely amazing
 
 Easy code is easy to compile and run. That has and always will be true. However,
 once the code you write spans across multiple classes, files, or even packages
 it can be hard to properly test, compile, and release this software. Continuous
-integration (CI) solves (for some definition of solves) this problem. By defining a
-pipeline of actions to take your code from source to product that run the same
-way every time. Docker (and containerization in general) augments this process
-by providing easy to use clean-slate images that these pipelines can built up
-on. Always starting at the same point and then running the same actions provides
-a stable pipeline that can reliably test, compile, and release a piece of
-software. This, in turn, provides a reliable platform that allows developers to
-more easily solve more problems.
+integration (CI) tries to solve this problem. By defining a pipeline of actions
+to take your code from source to product that run the same way every time. Docker
+(and containerization in general) augments this process by providing easy to use
+clean-slate images that these pipelines can built up on. Always starting at the
+same point and then running the same actions provides a stable pipeline that can
+reliably test, compile, and release a piece of software. This, in turn, provides
+a reliable platform that allows developers to more easily solve more problems.
 
 * GitHub Actions
 There are umpteen solutions for continuous integration. This includes [[www.jenkins.io][Jenkins]],
@@ -83,5 +81,7 @@ compile and push to the development branch (something I was already doing) and
 the changes are immediately reflected by my website.
 
 ** Secrets
-For some pipelines it is
-** Artifacts
+Some pipelines need sensitive variables to function correctly. Rather than commit these variables to the codebase you can enter them as a secret in the settings section of the repository. An action can access these secrets by using the following syntax: ~${{ secrets.SECRET_NAME }}~. The Hugo deployment pipeline uses the ~GITHUB_TOKEN~ secret that comes by default with every repository so that it can push the changes back to the master branch.
+
+* Conclusions
+GitHub Actions are an amazing addition to the platform. They allow small projects to enable a free and easy continuous integration pipeline while also being able to scale to larger projects. While it is not the end-all-be-all for CI, it is certainly a good jumping off point if you want to start investigating this world. There are some features that were not discussed in this post (namely artifacts as I haven't played with them much), but more information is available in the [[https://help.github.com/en/actions][documentation]].
