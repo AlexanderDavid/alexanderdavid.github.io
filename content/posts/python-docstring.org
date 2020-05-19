@@ -1,0 +1,9 @@
+#+title: Python Docstring
+#+date: 2020-05-18T17:41:26-04:00
+#+tags[]: python, emacs, emacs-plugin
+#+draft: true
+
+* Emacs
+Emacs is an incredibly extensible editor. It is one of the two major players in the unix "poweruser" editor wars.
+* Python Docstring
+* python-docstring.el
