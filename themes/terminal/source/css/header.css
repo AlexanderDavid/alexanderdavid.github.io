@@ -41,8 +41,10 @@
   }
 
   .menu {
+    /* --shadow: 0 10px var(--shadow-color), -10px 10px var(--shadow-color), 10px 10px var(--shadow-color); */
+    /* --shadow: 0 0 var(--shadow-color), -10px 10px var(--shadow-color), 10px 10px var(--shadow-color); */
     --shadow-color: color-mod(var(--background) a(80%));
-    --shadow: 0 10px var(--shadow-color), -10px 10px var(--shadow-color), 10px 10px var(--shadow-color);
+    --shadow: 3px 3px 5px 6px var(--shadow-color);
     margin: 20px 0;
 
     @media (--phone) {

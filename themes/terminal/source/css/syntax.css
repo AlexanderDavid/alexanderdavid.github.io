@@ -15,7 +15,7 @@ code.language-scss,
 .token.regex,
 .token.atrule,
 .token.number {
-  color: var(--accent);
+  color: var(--code-accent);
 }
 
 .token.tag-id,
