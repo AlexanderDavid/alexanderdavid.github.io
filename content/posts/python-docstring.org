@@ -4,6 +4,26 @@
 #+draft: true
 
 * Emacs
-Emacs is an incredibly extensible editor. It is one of the two major players in the unix "poweruser" editor wars.
+Emac[fn:emacs]s is an incredibly extensible editor. It is one of the two major players in the unix "poweruser" editor wars. It is both configured and extended in elisp, an emacs-specific dialect of lisp. The main benefit I see of using Emacs is how I can easily add functionality I find that I need.
 * Python Docstring
+At work currently I am writing a lot of python. When I write python I tend to write out a functions functionality before writing the docstring for it. I could not find an emacs plugin that could produce something like this:
+#+BEGIN_SRC python
+def find(needle: str, haystack: str) -> int:
+    """
+    Args:
+        needle (str):
+        haystack (str):
+
+    Returns:
+        int:
+    """
+#+END_SRC
+when given just the function header. Leaving me to fill in the blanks. There are some plugins that can do this in other styles (like sphinx-doc) or yas-snippets that can create the docstring at the same time as the header. But neither of these worked for my work flow.
 * python-docstring.el
+Rather than settle and use sphinx or a yas-snippet I decided to solve my own problem.
+
+So I wrote a plugin for it. The code is avaliable on my [[https://github.com/AlexanderDavid/python-docstring][github]]. I am not a lisp user by any stretch of the immagination and this is the first time I've written anything bigger than a couple of lines since my junior year in college. It relies heavily on regular expressions and I will probably keep cleaning it up but it solves the problem that I had.
+
+* Footnotes
+
+[fn:emacs] Emacs
