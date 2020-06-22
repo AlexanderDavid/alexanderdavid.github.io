@@ -1,0 +1,28 @@
+#+title: Mu4e Tags to Address
+#+date: 2020-06-21T23:35:28-04:00
+#+tags[]: mu4e emacs org_capture
+#+description: Automatically tag mu4e emails with org-capture
+#+draft: true
+
+I use [[{{< ref "emacs-for-email.org" >}}][emacs for email]] and [[https://orgmode.org/manual/Capture.html][org capture]] to keep track of my open loops. Recently I have been trying to combine the two and capture tasks that link to emails. I wanted to [[https://orgmode.org/manual/Tags.html][tag]] my capture items based on the inbox they fall into, ~:@home:~ for my personal and ~:@school~ for my school emails. I cobbled together this function based upon different stackexchange posts and figured I would share it here for anyone who wanted to do the same.
+
+
+* Code
+This function generates the tag based on the ~:to~ address of the stored email. If the email is my personal (alexday135@gmail) the tag is ~:@home:~ and any other email is tagged ~:@school:~.
+#+BEGIN_SRC emacs-lisp
+(defun create-mail-tag ()
+  "Create the tag for the todo"
+  (let ((to (plist-get org-store-link-plist :to)))
+    (if (equal to "'Alex Day' <alexday135@gmail.com>")
+        ":@home:"
+        ":@school:")))
+#+END_SRC
+
+This is the actual capture template. This just creates a new item in my inbox with a link to the email (~%a~), the tag (~%(create-mail-tag)~), and then the date the email was sent on the line below. No capture window pops up and it is immediately added to my inbox.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates
+    '(("e" "Email" entry (file+headline "~/Dropbox/gtd/inbox.org" "Inbox")
+        "* TODO [#A] Reply: %a %(create-mail-tag)\n%:date-timestamp"
+        :immediate-finish t)))
+#+END_SRC
