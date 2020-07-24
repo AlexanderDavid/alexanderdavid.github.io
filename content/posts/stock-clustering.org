@@ -1,0 +1,124 @@
+#+title: Stock Clustering
+#+date: 2020-05-20T23:41:25-04:00
+#+tags[]:
+#+draft: true
+#+description: Clustering stock descriptions by their descriptions
+
+One of the problems in Natural Language Processing (and a problem I'm facing at work) is how to cluster documents into groups based on their contents. There are two broad approaches to solving the document clustering problem, supervised and unsupervised machine learning. Supervised machine learning relies on labeled data and unsupervised learning tries to categorize the data without any prior labels. These two methods both have their ups and downs that I will not go into here. For the task of clustering stock descriptions we will be using unsupervised clustering, more specifically k-means clustering.
+
+The starting point for the dataset is the [[https://raw.githubusercontent.com/AlexanderDavid/Stock-Description-Clustering/master/s_and_p.txt][S&P 500 list]]. Using this list I made a [[https://raw.githubusercontent.com/AlexanderDavid/Stock-Description-Clustering/master/download_stocks.sh][small script]] to download the descriptions of the stocks from Robinhood. The format of the resulting tab separated file can be seen in the table below.
+
+| AAP  | Advance Auto Parts, Inc. engages in the supply and distribution of aftermarket automot... |
+| CVS  | CVS Health Corp. engages in the provision of health care services. It operates through... |
+| WMB  | The Williams Cos., Inc. operates as an energy infrastructure company, which explores,...  |
+| GOOG | Alphabet, Inc. is a holding company, which engages in the business of acquisition and...  |
+| MSFT | Microsoft Corp. engages in the development and support of software, services, devices...  |
+
+Some imports[fn:imports] are required before we can get going, but then we can collect all the stocks into a list of the ticker name and the descriptions.
+
+#+BEGIN_SRC python :output results :session stocks
+# Import the data
+with open("stock_descs.tsv") as file:
+    stocks = [tuple(line.replace("\n", "").split('\t')) for line in file]
+#+END_SRC
+
+Then we can train a [[https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html][sklearn TfidfVectorizer]] model on the data and transform all of the descriptions into their tf-idf values for each word in the corpus.
+
+#+BEGIN_SRC python :output results :session stocks
+# Train TfidfVectorizor
+corpus = [stock[1] for stock in stocks]
+tf_idf = TfidfVectorizer(stop_words="english",
+                         preprocessor=lambda doc: " ".join(preprocess_string(doc)))
+tf_idf_matrix = tf_idf.fit_transform(corpus)
+#+END_SRC
+
+We can then train KMeans models with K values ranging from 2 to 30. Using the elbow method we find that the best K value is 13.
+
+#+BEGIN_SRC python :session stocks
+# Elbow method
+scores = []
+ks = range(2, 30)
+for k in ks:
+    kmeans = KMeans(n_clusters=k).fit(tf_idf_matrix)
+    kmeans.fit(tf_idf_matrix)
+    scores.append(kmeans.score(tf_idf_matrix))
+#+END_SRC
+
+#+BEGIN_SRC python :session stocks :output file
+# Plot the elbow
+plt.plot(ks, scores, 'bx-')
+plt.xlabel('# Clusters')
+plt.ylabel('KMeans Score')
+choice = 13
+plt.gcf().gca().add_artist(
+    Ellipse((choice, scores[choice-2]), 1.125, 4, color='r', fill=False, lw=5)
+)
+plt.title('The Elbow Method showing the optimal k')
+plt.show()
+#+END_SRC
+
+{{< image src="/img/stock_clustering_elbow_method.png" alt="mu4e main menu" position="center" style="border-radius: 8px;" >}}
+
+Then we can sort the stocks into their predicted classes.
+
+#+BEGIN_SRC python :session stocks
+# Sort the stocks into clusters
+clusters = defaultdict(list)
+kmeans = KMeans(n_clusters=13, random_state=0)
+predictions = kmeans.fit_predict(tf_idf_matrix)
+for i, prediction in enumerate(predictions):
+    clusters[prediction].append(stocks[i])
+#+END_SRC
+
+And finally print the keywords and descriptions for any given category. In this case I chose category 5 which seems to be some sort of life insurance category.
+
+#+BEGIN_SRC python :session stocks :results output
+def top_words(cluster_number: int) -> List[str]:
+    tf_idf_scores = tf_idf.transform([stock[1] for stock in clusters[cluster_number]]).sum(axis=0)
+    scored_words = [(tf_idf_scores[0,i], term) for i, term in enumerate(tf_idf.get_feature_names())]
+    sorted_words = sorted(scored_words, key=lambda x: -x[0])
+    return [word[1] for word in sorted_words][:5]
+
+def pretty_print_cluster(cluster_number: int) -> None:
+    print("Keywords:")
+    print("\n".join(top_words(cluster_number)))
+    print("\nStock Descriptions:")
+    print("\n\n".join(stock[1] for stock in clusters[cluster_number]))
+
+pretty_print_cluster(5)
+#+END_SRC
+
+Keywords:
+- insur
+- life
+- segment
+- individu
+- group
+
+Stock Descriptions:
+- Aflac, Inc. is a holding company, which engages in the provision financial protection services...
+
+- The Allstate Corp. engages in the property and casualty insurance business and the sale of life, accident, and health insurance products through its subsidiaries...
+
+- American International Group, Inc. engages in the provision of a range of property casualty insurance, life insurance, retirement products, and other financial services to commercial and individual customers...
+
+- Anthem, Inc. provides life, hospital and medical insurance plans. It offers a broad spectrum of network-based managed care health benefit plans to the large and small employer, individual, Medicaid, and Medicare markets...
+
+- ...
+
+
+* Footnotes
+
+[fn:imports]
+#+BEGIN_SRC python :output results :session stocks
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.cluster import KMeans
+from scipy.spatial.distance import cdist
+from random import shuffle
+import numpy as np
+from matplotlib import pyplot as plt
+from matplotlib.patches import Ellipse
+from collections import defaultdict
+from gensim.parsing import preprocess_string
+from typing import List
+#+END_SRC
