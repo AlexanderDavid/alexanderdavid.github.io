@@ -17,14 +17,15 @@
 <p><strong><strong>Day, Alex</strong></strong>, Chris Mankos, Soo Kim, and Jody Strausser. November 2019.
 “Sentence Compression Using Emoji Summarization.” <em>Penn-York Undergraduate
 Research Conference</em> at Clarion University of Pennsylvania. [<a
-href="/assets/pdf/PennYorkSentenceCompression.pptx">slides</a>] [<a href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation">code</a>]</p> </div>
+href="/ppt/PennYorkSentenceCompression.pptx">slides</a>] [<a href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation">code</a>]</p> </div>
 
 <div id="ref-DSML4Kidz">
 <p>Hum, Sam, <strong><strong>Day, Alex</strong></strong>, and Wagner, Riley. August 2019. “Verification and Creation
 of Autonomous Vehicle Trajectories for Non-Experts with Reactive Design-Time
 Feedback and Sensor-Based Response.” <em>Undergraduate Research Opportunities
 Consortium</em> at the University of Arizona. [<a
-href="https://github.com/jmscslgroup/DSML4KidsReachabilityServer">code</a>]</p>
+href="https://github.com/jmscslgroup/DSML4KidsReachabilityServer">code</a>]
+[<a href="https://youtu.be/KEjuAcIkj5k">video</a>]</p>
 </div>
 
 <div id="ref-unittest">
