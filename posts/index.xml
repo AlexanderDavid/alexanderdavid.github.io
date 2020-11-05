@@ -1,1 +1,1009 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Alex Day</title><link>/posts/</link><description>Recent content in Posts on Alex Day</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>© 2020 Alex Day</copyright><lastBuildDate>Sun, 21 Jun 2020 23:35:28 -0400</lastBuildDate><atom:link href="/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Mu4e Tags to Address</title><link>/posts/mu4e-tags-to-address/</link><pubDate>Sun, 21 Jun 2020 23:35:28 -0400</pubDate><guid>/posts/mu4e-tags-to-address/</guid><description>I use emacs for email and org capture to keep track of my open loops. Recently I have been trying to combine the two and capture tasks that link to emails. I wanted to tag my capture items based on the inbox they fall into, :@home: for my personal and :@school for my school emails. I cobbled together this function based upon different stackexchange posts and figured I would share it here for anyone who wanted to do the same.</description></item><item><title>GitHub Actions</title><link>/posts/github-actions/</link><pubDate>Mon, 04 May 2020 00:00:00 +0000</pubDate><guid>/posts/github-actions/</guid><description>Easy code is easy to compile and run. That has and always will be true. However, once the code you write spans across multiple classes, files, or even packages it can be hard to properly test, compile, and release this software. Continuous integration (CI) tries to solve this problem. By defining a pipeline of actions to take your code from source to product that run the same way every time.</description></item><item><title>Emacs for Email</title><link>/posts/emacs-for-email/</link><pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate><guid>/posts/emacs-for-email/</guid><description>Email management, when heavily abstracted, is simple. To start reading email offline on your own PC you need three programs: Sync email to/from IMAP server (mbsync) Manage email on your PC (mu and mu4e) Send email (msmtp) Once these three parts are working together then email can be downloaded, viewed, and replied to. Getting these programs working is no easy task, however.</description></item><item><title>Dependency Tree Collapse for N-Gram Generation</title><link>/posts/dependency-tree-collapse/</link><pubDate>Wed, 06 Nov 2019 00:00:00 +0000</pubDate><guid>/posts/dependency-tree-collapse/</guid><description>Introduction Throughout the past semester I have been working on my senior capstone project for my CS undergraduate. The project is to create Emoji summaries for sentences and one of the integral parts of this algorithm is separating a sentence into a sequence of n-grams that represent it. In the initial algorithm, I took a naive approach of generating every single combination of n-grams, summarizing them all, and then returning the summary with the highest result.</description></item><item><title>Naive Sentence to Emoji Translation</title><link>/posts/naive-emoji-summarization/</link><pubDate>Mon, 07 Oct 2019 00:00:00 +0000</pubDate><guid>/posts/naive-emoji-summarization/</guid><description>Motivation My senior capstone project for my computer science degree is research focused on summarizing sentences. My group mate and I decided to try and accomplish this by converting sentences into Emoji. We think that this will produce a more information-dense string. This problem is rather similar to a plethora of different problems in computer science and other, unrelated, domains. Within computer science, it is adjacent to the Emoji prediction and Emoji embedding problems.</description></item><item><title>TF-IDF and Document Summarization</title><link>/posts/tf-idf/</link><pubDate>Thu, 25 Apr 2019 00:00:00 +0000</pubDate><guid>/posts/tf-idf/</guid><description>Term Frequency-Inverse Document Frequency (commonly abbreviated as TF-IDF) is a formula commonly used in Natural Language Processing (NLP) to determine the relative importance of a word. The formula is comprised of two sub-formulas, term frequency and inverse document frequency. The basic assumption of this formula is that if a word appears more in one document and less in every other document in the corpus then it is very important to that specific document.</description></item></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Alex Day</title><link>www.alexday.me/posts/</link><description>Recent content in Posts on Alex Day</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>&lt;a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0&lt;/a></copyright><lastBuildDate>Sun, 21 Jun 2020 23:35:28 -0400</lastBuildDate><atom:link href="www.alexday.me/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Mu4e Tags to Address</title><link>www.alexday.me/posts/mu4e-tags-to-address/</link><pubDate>Sun, 21 Jun 2020 23:35:28 -0400</pubDate><guid>www.alexday.me/posts/mu4e-tags-to-address/</guid><description>I use emacs for email and org capture to keep track of my open loops. Recently I have been trying to combine the two and capture tasks that link to emails. I wanted to tag my capture items based on the inbox they fall into, :@home: for my personal and :@school for my school emails. I cobbled together this function based upon different stackexchange posts and figured I would share it here for anyone who wanted to do the same.</description><content type="html"><![CDATA[
+<p>
+I use <a href="www.alexday.me/posts/emacs-for-email/">emacs for email</a> and <a href="https://orgmode.org/manual/Capture.html">org capture</a> to keep track of my open loops. Recently I have been trying to combine the two and capture tasks that link to emails. I wanted to <a href="https://orgmode.org/manual/Tags.html">tag</a> my capture items based on the inbox they fall into, <code>:@home:</code> for my personal and <code>:@school</code> for my school emails. I cobbled together this function based upon different stackexchange posts and figured I would share it here for anyone who wanted to do the same.</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Code
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>This function generates the tag based on the <code>:to</code> address of the stored email. If the email is my personal (alexday135@gmail) the tag is <code>:@home:</code> and any other email is tagged <code>:@school:</code>.</p>
+<div class="src src-emacs-lisp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(defun create-mail-tag ()
+  <span style="color:#e6db74">&#34;Create the tag for the todo&#34;</span>
+  (let ((to (<span style="color:#a6e22e">plist-get</span> org-store-link-plist :to)))
+    (if (<span style="color:#a6e22e">equal</span> to <span style="color:#e6db74">&#34;&#39;Alex Day&#39; &lt;alexday135@gmail.com&gt;&#34;</span>)
+        <span style="color:#e6db74">&#34;:@home:&#34;</span>
+        <span style="color:#e6db74">&#34;:@school:&#34;</span>)))</code></pre></div>
+</div>
+<p>
+This is the actual capture template. This just creates a new item in my inbox with a link to the email (<code>%a</code>), the tag (<code>%(create-mail-tag)</code>), and then the date the email was sent on the line below. No capture window pops up and it is immediately added to my inbox.</p>
+<div class="src src-emacs-lisp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(setq org-capture-templates
+    <span style="color:#f92672">&#39;</span>((<span style="color:#e6db74">&#34;e&#34;</span> <span style="color:#e6db74">&#34;Email&#34;</span> entry (file+headline <span style="color:#e6db74">&#34;~/Dropbox/gtd/inbox.org&#34;</span> <span style="color:#e6db74">&#34;Inbox&#34;</span>)
+        <span style="color:#e6db74">&#34;* TODO [#A] Reply: %a %(create-mail-tag)\n%:date-timestamp&#34;</span>
+        :immediate-finish <span style="color:#66d9ef">t</span>)))</code></pre></div>
+</div>
+</div>
+</div>
+]]></content></item><item><title>GitHub Actions</title><link>www.alexday.me/posts/github-actions/</link><pubDate>Mon, 04 May 2020 00:00:00 +0000</pubDate><guid>www.alexday.me/posts/github-actions/</guid><description>Easy code is easy to compile and run. That has and always will be true. However, once the code you write spans across multiple classes, files, or even packages it can be hard to properly test, compile, and release this software. Continuous integration (CI) tries to solve this problem. By defining a pipeline of actions to take your code from source to product that run the same way every time.</description><content type="html"><![CDATA[
+<p>
+Easy code is easy to compile and run. That has and always will be true. However,
+once the code you write spans across multiple classes, files, or even packages
+it can be hard to properly test, compile, and release this software. Continuous
+integration (CI) tries to solve this problem. By defining a pipeline of actions
+to take your code from source to product that run the same way every time. Docker
+(and containerization in general) augments this process by providing easy to use
+clean-slate images that these pipelines can built up on. Always starting at the
+same point and then running the same actions provides a stable pipeline that can
+reliably test, compile, and release a piece of software. This, in turn, provides
+a reliable platform that allows developers to more easily solve more problems.</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+GitHub Actions
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>There are umpteen solutions for continuous integration. This includes <a href="www.jenkins.io">Jenkins</a>,
+<a href="https://cloud.google.com/tekton/">Tekton</a>, and <a href="https://github.com/features/actions">GitHub Actions</a>. Over the past couple of weeks I have been using
+GitHub Actions (first for work and most recently for this website) and I have
+found that it drastically increases my productivity by reducing the time I spend
+on either producing a wheel, running pytest, or generating and uploading this
+Hugo-driven site.</p>
+<div id="outline-container-headline-2" class="outline-3">
+<h3 id="headline-2">
+Pipeline
+</h3>
+<div id="outline-text-headline-2" class="outline-text-3">
+<p>GitHub uses YAML files to define a CI pipeline. A pipeline is a set of actions
+in an explicit order. These actions can either be a command to the operating
+system (e.g. <code>echo &#34;Hello World&#34;</code> or <code>curl www.google.com</code>) or a group of
+commands developed by someone (e.g. <a href="https://github.com/actions/checkout">checking out a repo</a> or <a href="https://github.com/peaceiris/actions-hugo">generating a hugo
+site</a>). All these actions run on a fresh instance of a virtual machine. There are
+two choices when it comes to these virtual machines. You can either host your
+own virtual machine, or use one that GitHub hosts (GitHub hosted platforms are
+Windows Server 2019, Ubuntu 18.04 and 16.04, and MacOS Catalina).</p>
+<p>
+Below is the pipeline for this site. The pipeline&#39;s environment is Ubuntu 18.04 and
+there are four actions this pipeline takes. The first action
+(<a href="https://github.com/actions/checkout">actions/checkout@v2</a>) checks the site repo out. Because the definition for this
+workflow is in the <a href="https://github.com/AlexanderDavid/alexanderdavid.github.io/tree/devel">devel</a> branch that is the branch that this action checks out.
+The next action (<a href="https://www.github.com/peaceiris/actions-hugo">peaceiris/actions-hugo@v2</a>) installs Hugo v0.68.3. The site is
+then built using a simple action that executes <code>hugo --minify</code>. This builds the
+site into the <code>public</code> directory. The last action (<a href="https://www.github.com/peaceiris/actions-gh-pages">peaceiris/actions-gh-pages</a>)
+publishes the <code>public</code> directory into the master branch and adds the CNAME file
+that allows me to use my own domain name.</p>
+<div class="src src-yaml">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># .github/actions/main.yml</span>
+<span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build Hugo</span>
+
+<span style="color:#f92672">on</span>:
+  <span style="color:#f92672">push</span>:
+    <span style="color:#f92672">branches</span>:
+      - <span style="color:#ae81ff">devel</span>
+
+<span style="color:#f92672">jobs</span>:
+  <span style="color:#f92672">deploy</span>:
+    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-18.04</span>
+    <span style="color:#f92672">steps</span>:
+      - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v2</span>
+
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Hugo</span>
+        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-hugo@v2</span>
+        <span style="color:#f92672">with</span>:
+          <span style="color:#f92672">hugo-version</span>: <span style="color:#e6db74">&#39;0.68.3&#39;</span>
+
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build</span>
+        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">hugo --minify</span>
+
+      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy</span>
+        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-gh-pages@v3</span>
+        <span style="color:#f92672">with</span>:
+          <span style="color:#f92672">github_token</span>: <span style="color:#ae81ff">${{ secrets.GITHUB_TOKEN }}</span>
+          <span style="color:#f92672">publish_dir</span>: <span style="color:#ae81ff">./public</span>
+          <span style="color:#f92672">publish_branch</span>: <span style="color:#ae81ff">master</span>
+          <span style="color:#f92672">cname</span>: <span style="color:#ae81ff">www.alexday.me</span></code></pre></div>
+</div>
+<p>
+This is all that GitHub needs to reliably compile and serve my website. Prior to
+this I had to compile the website locally into a different directory and then
+commit and push that to the master branch of the repository. Now I can just
+compile and push to the development branch (something I was already doing) and
+the changes are immediately reflected by my website.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-3">
+<h3 id="headline-3">
+Secrets
+</h3>
+<div id="outline-text-headline-3" class="outline-text-3">
+<p>Some pipelines need sensitive variables to function correctly. Rather than commit these variables to the codebase you can enter them as a secret in the settings section of the repository. An action can access these secrets by using the following syntax: <code>${{ secrets.SECRET_NAME }}</code>. The Hugo deployment pipeline uses the <code>GITHUB_TOKEN</code> secret that comes by default with every repository so that it can push the changes back to the master branch.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Conclusions
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>GitHub Actions are an amazing addition to the platform. They allow small projects to enable a free and easy continuous integration pipeline while also being able to scale to larger projects. While it is not the end-all-be-all for CI, it is certainly a good jumping off point if you want to start investigating this world. There are some features that were not discussed in this post (namely artifacts as I haven&#39;t played with them much), but more information is available in the <a href="https://help.github.com/en/actions">documentation</a>.</p>
+</div>
+</div>
+]]></content></item><item><title>Emacs for Email</title><link>www.alexday.me/posts/emacs-for-email/</link><pubDate>Sun, 12 Apr 2020 00:00:00 +0000</pubDate><guid>www.alexday.me/posts/emacs-for-email/</guid><description>Email management, when heavily abstracted, is simple. To start reading email offline on your own PC you need three programs:
+Sync email to/from IMAP server (mbsync)
+Manage email on your PC (mu and mu4e)
+Send email (msmtp)
+Once these three parts are working together then email can be downloaded, viewed, and replied to. Getting these programs working is no easy task, however.</description><content type="html"><![CDATA[
+<p>
+Email management, when heavily abstracted, is simple. To start reading
+email offline on your own PC you need three programs:</p>
+<ul>
+<li>
+<p>Sync email to/from IMAP server (<code>mbsync</code>)</p>
+</li>
+<li>
+<p>Manage email on your PC (<code>mu</code> and <code>mu4e</code>)</p>
+</li>
+<li>
+<p>Send email (<code>msmtp</code>)</p>
+</li>
+</ul>
+<p>Once these three parts are working together then email can be downloaded,
+viewed, and replied to. Getting these programs working is no easy task, however.</p>
+<p>
+My motivation in doing this was the end goal of easily <code>org capture</code>-ing my
+emails and adding them to my master <code>todo.org</code> file. I thought that by keeping
+all of my actionable tasks in one central place I could be more productive. Time
+will tell if that assumption is true.</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+mbsync
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p><code>mbsync</code> is a tool written in python to facilitate the downloading and
+uploading of mail from an IMAP server. There are other programs for doing this
+(namely, <a href="https://wiki.archlinux.org/index.php/OfflineIMAP"><code>OfflineIMAP</code></a>), but I chose <code>mbsync</code> because it was the easiest for me
+to setup, didn&#39;t have any weird certificate errors with gmail, and it was
+incredibly fast.</p>
+<p>
+My <code>mbsync</code> setup uses two gmail accounts. However, for the sake of
+brevity, I have trimmed it down to just use one. The whole
+configuration is in my <a href="https://github.com/AlexanderDavid/dotfiles">dotfiles</a> repository.</p>
+<p>
+To store passwords on the command line I use the <a href="https://wiki.archlinux.org/index.php/Pass"><code>pass</code></a> password manager.
+To access a command line password manager <code>mbsync</code> uses the <code>PassCmd</code> setting to
+define a command that will return the password. I use <a href="https://github.com/cruegge/pam-gnupg">pam gnupg</a> program to
+unlock my gnupg key on login I do not have to keep entering my GPG password to
+provide my email password to <code>mbsync</code>.</p>
+<p>
+I dislike the <code>[Gmail].</code> prefix that all folders have when downloaded by
+default. To solve this problem I have a channel for each of the folders I
+download and I can give each of them an explicit file name. For example,
+&#34;[Gmail].Sent Mail&#34; is renamed to sent in the configuration snippet below.</p>
+<div class="src src-toml">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml"><span style="color:#a6e22e">Channel</span> <span style="color:#a6e22e">sync</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#a6e22e">gmail</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#a6e22e">sent</span>
+<span style="color:#a6e22e">Master</span> <span style="color:#960050;background-color:#1e0010">:</span><span style="color:#a6e22e">gmail</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#a6e22e">remote</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#e6db74">&#34;[Gmail]/Sent Mail&#34;</span>
+<span style="color:#a6e22e">Slave</span> <span style="color:#960050;background-color:#1e0010">:</span><span style="color:#a6e22e">gmail</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#a6e22e">local</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#a6e22e">sent</span>
+<span style="color:#a6e22e">Create</span> <span style="color:#a6e22e">Slave</span></code></pre></div>
+</div>
+<p>
+On top of renaming some folders I also disabled some of the folders I don&#39;t use
+in Gmail&#39;s settings. You can do this by going to <code>settings</code> → <code>Labels</code>.</p>
+<p>
+
+  <img src="/img/gmail-imap-settings.png"  alt="Gmail IMAP settings to simplify the IMAP folder structure"  class="center"  style="border-radius: 8px;"  />
+
+</p>
+<p>
+All in all my <code>mbsync</code> config file is simple. If you are looking for more
+information about how to set up <code>mbsync</code> you can find it on the <a href="https://wiki.archlinux.org/index.php/Isync">Arch Wiki</a>.</p>
+<div class="src src-yaml">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#ae81ff">IMAPAccount gmail</span>
+<span style="color:#ae81ff">Host imap.gmail.com</span>
+<span style="color:#ae81ff">User alexday135@gmail.com</span>
+<span style="color:#ae81ff">PassCmd &#34;pass mail/gmail&#34;</span>
+<span style="color:#ae81ff">SSLType IMAPS</span>
+<span style="color:#ae81ff">CertificateFile /etc/ssl/certs/ca-certificates.crt</span>
+
+<span style="color:#ae81ff">IMAPStore gmail-remote</span>
+<span style="color:#ae81ff">Account gmail</span>
+
+<span style="color:#ae81ff">MaildirStore gmail-local</span>
+<span style="color:#ae81ff">Subfolders Verbatim</span>
+<span style="color:#ae81ff">Path ~/.local/share/mail/gmail/</span>
+<span style="color:#ae81ff">Inbox ~/.local/share/mail/gmail/INBOX</span>
+
+<span style="color:#ae81ff">Channel sync-gmail-default</span>
+<span style="color:#f92672">Master :gmail-remote</span>:
+<span style="color:#f92672">Slave :gmail-local</span>:
+<span style="color:#ae81ff">Patterns &#34;INBOX&#34;</span>
+
+<span style="color:#75715e"># Create missing folders everywhere</span>
+<span style="color:#ae81ff">SyncState *</span>
+
+<span style="color:#ae81ff">Channel sync-gmail-sent</span>
+<span style="color:#ae81ff">Master :gmail-remote:&#34;[Gmail]/Sent Mail&#34;</span>
+<span style="color:#ae81ff">Slave :gmail-local:sent</span>
+<span style="color:#ae81ff">Create Slave</span>
+
+<span style="color:#ae81ff">Channel sync-gmail-archive</span>
+<span style="color:#ae81ff">Master :gmail-remote:&#34;archive&#34;</span>
+<span style="color:#ae81ff">Slave :gmail-local:archive</span>
+<span style="color:#ae81ff">Create Slave</span>
+
+<span style="color:#ae81ff">Channel sync-gmail-drafts</span>
+<span style="color:#ae81ff">Master :gmail-remote:&#34;[Gmail]/Drafts&#34;</span>
+<span style="color:#ae81ff">Slave :gmail-local:drafts</span>
+<span style="color:#ae81ff">Create Slave</span>
+
+<span style="color:#ae81ff">Channel sync-gmail-trash</span>
+<span style="color:#ae81ff">Master :gmail-remote:&#34;[Gmail]/Trash&#34;</span>
+<span style="color:#ae81ff">Slave :gmail-local:trash</span>
+<span style="color:#ae81ff">Create Slave</span>
+
+<span style="color:#75715e"># Get all the channels together into a group.</span>
+<span style="color:#ae81ff">Group gmail</span>
+<span style="color:#ae81ff">Channel sync-gmail-default</span>
+<span style="color:#ae81ff">Channel sync-gmail-sent</span>
+<span style="color:#ae81ff">Channel sync-gmail-trash</span>
+<span style="color:#ae81ff">Channel sync-gmail-drafts</span>
+<span style="color:#ae81ff">Channel sync-gmail-archive</span></code></pre></div>
+</div>
+<p>
+Once <code>mbsync</code> is set and the root mail folder has been created up you can
+run <code>mbsync -a</code> to sync all mailboxes or sync a specific account by running
+<code>mbsync</code> followed by the account name.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+mu/mu4e
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p><code>mu</code> is a super fast mail indexer that comes with <code>mu4e</code> which is an email
+client for emacs. Both of them work together to allow a powerful, search based
+email interface that is keyboard-driven. When you first start it up you will see
+a relatively bare main menu.</p>
+<p>
+
+  <img src="/img/mu4e-main-menu.png"  alt="mu4e main menu"  class="center"  style="border-radius: 8px;"  />
+
+</p>
+<p>
+From there you can jump to your inbox and start reading and replying to mail.
+There are videos that can explain <code>mu4e</code> a lot better than I can so if you need
+an intro I would recommend <a href="https://www.youtube.com/watch?v=newRHXKm4H4">Mike Zamansky&#39;s mu4e video</a>.</p>
+<p>
+I use <a href="https://github.com/hlissner/doom-emacs">doom emacs</a> and I haven&#39;t tested this config in vanilla emacs so I cannot
+guarentee that this will work but I can see no reason why it wouldnt. Basicelly
+this config sets up a mail account with specific folders for the mail. It also
+sets up <code>msmtp</code> as the mechanism to send a message.</p>
+<div class="src src-emacs-lisp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp"><span style="color:#75715e">;; ~/.doom.d/config.el</span>
+(require <span style="color:#e6db74">&#39;mu4e</span>)
+
+<span style="color:#75715e">;; use mu4e for e-mail in emacs</span>
+(setq mail-user-agent <span style="color:#e6db74">&#39;mu4e-user-agent</span>)
+(setq mu4e-maildir <span style="color:#e6db74">&#34;/home/alex/.local/share/mail&#34;</span>)
+
+<span style="color:#75715e">;; default</span>
+(setq mu4e-contexts
+    <span style="color:#f92672">`</span>( <span style="color:#f92672">,</span>(make-mu4e-context
+        :name <span style="color:#e6db74">&#34;clemson&#34;</span>
+        :enter-func (lambda ()
+                        (mu4e-message <span style="color:#e6db74">&#34;Entering Clemson context&#34;</span>)
+                        <span style="color:#75715e">;; Quicky jump to/move a mail to different folders</span>
+                        (setq mu4e-maildir-shortcuts  <span style="color:#f92672">&#39;</span>( (<span style="color:#e6db74">&#34;/clemson/INBOX&#34;</span>   <span style="color:#f92672">.</span> <span style="color:#e6db74">?i</span>)
+                                                         (<span style="color:#e6db74">&#34;/clemson/sent&#34;</span>    <span style="color:#f92672">.</span> <span style="color:#e6db74">?s</span>)
+                                                         (<span style="color:#e6db74">&#34;/clemson/trash&#34;</span>   <span style="color:#f92672">.</span> <span style="color:#e6db74">?t</span>)
+                                                         (<span style="color:#e6db74">&#34;/clemson/drafts&#34;</span>  <span style="color:#f92672">.</span> <span style="color:#e6db74">?d</span>)
+                                                         (<span style="color:#e6db74">&#34;/clemson/archive&#34;</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">?r</span>))))
+        :leave-func (lambda ()
+                        (mu4e-message <span style="color:#e6db74">&#34;Leaving Clemson context&#34;</span>))
+        :match-func (lambda (msg)
+                        (when msg
+                            <span style="color:#75715e">;; Clemson has two valid emails for each student</span>
+                            (or (mu4e-message-contact-field-matches msg
+                                    :to <span style="color:#e6db74">&#34;adday@clemson.edu&#34;</span>)
+                                (mu4e-message-contact-field-matches msg
+                                    :to <span style="color:#e6db74">&#34;adday@g.clemson.edu&#34;</span>))))
+
+        :vars <span style="color:#f92672">&#39;</span>( ( user-mail-address      <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;adday@clemson.edu&#34;</span>  )
+                 ( <span style="color:#a6e22e">user-full-name</span>         <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;Alex Day&#34;</span> )
+                 ( mu4e-drafts-folder     <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/clemson/drafts&#34;</span>)
+                 ( mu4e-sent-folder       <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/clemson/sent&#34;</span>)
+                 ( mu4e-trash-folder      <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/clemson/trash&#34;</span>)
+                 ( mu4e-refile-folder     <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/clemson/archive&#34;</span> )
+                 ( mu4e-compose-signature <span style="color:#f92672">.</span> (<span style="color:#a6e22e">concat</span> <span style="color:#e6db74">&#34;Alex Day&#34;</span>))))))
+
+
+<span style="color:#75715e">;; don&#39;t save message to Sent Messages, Gmail/IMAP takes care of this</span>
+(setq mu4e-sent-messages-behavior <span style="color:#e6db74">&#39;delete</span>)
+
+<span style="color:#75715e">;; allow for updating mail using &#39;U&#39; in the main view:</span>
+(setq mu4e-get-mail-command <span style="color:#e6db74">&#34;mbsync -a&#34;</span>)
+
+(setq message-send-mail-function <span style="color:#e6db74">&#39;message-send-mail-with-sendmail</span>)
+(setq sendmail-program <span style="color:#e6db74">&#34;/usr/bin/msmtp&#34;</span>)
+<span style="color:#75715e">;; tell msmtp to choose the SMTP server by the &#39;from&#39; field in the outgoing email</span>
+(setq message-sendmail-extra-arguments <span style="color:#f92672">&#39;</span>(<span style="color:#e6db74">&#34;--read-envelope-from&#34;</span>))
+(setq message-sendmail-f-is-evil <span style="color:#e6db74">&#39;t</span>)</code></pre></div>
+</div>
+<p>
+As well as just reading messages in emacs I also wanted some way of capturing
+messages with org-capture. To do this I set up a capture template that I could
+use while either in a message or hovering over a message on the <code>mu4e</code> search.</p>
+<div class="src src-emacs-lisp">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-emacs-lisp" data-lang="emacs-lisp">(require <span style="color:#e6db74">&#39;org-mu4e</span>)
+(setq org-capture-templates
+        (<span style="color:#e6db74">&#34;e&#34;</span> <span style="color:#e6db74">&#34;Email Todo&#34;</span> entry (file+headline <span style="color:#e6db74">&#34;~/doc/org/todo.org&#34;</span> <span style="color:#e6db74">&#34;Inbox&#34;</span>)
+         <span style="color:#e6db74">&#34;* TODO %?\nProcess mail from %:fromname on %:subject\nSCHEDULED:%t\nDEADLINE: %(org-insert-time-stamp (org-read-date nil t \&#34;+2d\&#34;))\n:PROPERTIES:\n:CREATED: %U\n:END:\n %a&#34;</span> :prepend <span style="color:#66d9ef">t</span>))</code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+msmtp
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>I use <code>msmtp</code> to send emails from <code>mu4e</code>. It handles multiple email addresses by
+reading the &#39;from&#39; field that <code>mu4e</code> sends along with the email. This program is
+the only one I have had absolutely no problems with.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># ~/.config/msmtp/config</span>
+defaults
+auth on
+tls on
+tls_trust_file <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>ssl<span style="color:#f92672">/</span>certs<span style="color:#f92672">/</span>ca<span style="color:#f92672">-</span>certificates<span style="color:#f92672">.</span>crt
+logfile <span style="color:#f92672">~/.</span>config<span style="color:#f92672">/</span>msmtp<span style="color:#f92672">/</span>msmtp<span style="color:#f92672">.</span>log
+
+account clemson
+host smtp<span style="color:#f92672">.</span>gmail<span style="color:#f92672">.</span>com
+port <span style="color:#ae81ff">587</span>
+<span style="color:#f92672">from</span> adday<span style="color:#a6e22e">@clemson.edu</span>
+user adday<span style="color:#a6e22e">@g.clemson.edu</span>
+passwordeval <span style="color:#e6db74">&#34;pass mail/clemson&#34;</span>
+
+account default : clemson</code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Show Unread Mail in the Statusbar
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>I use this script to display the number of unread emails in my status bar. I use
+<a href="https://tools.suckless.org/slstatus/">slstatus</a> with the <a href="https://dwm.suckless.org/patches/status2d/">status2d</a> patch for <a href="https://dwm.suckless.org/">dwm</a> to allow colors in the status bar. It
+should be plug and play if you change the directory it looks for new mail in and
+have font-awesome installed for the mailbox icon.</p>
+<div class="src src-bash">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/usr/bin/env sh
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e"># Get the number of new mails in all INBOX folders</span>
+NEWMAILS<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>du -a ~/.local/share/mail/*/INBOX/new/* 2&gt;/dev/null | wc -l<span style="color:#66d9ef">)</span>
+
+<span style="color:#75715e"># Print the number of new mails to the statusbar if there are any</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[</span> <span style="color:#e6db74">&#34;</span>$NEWMAILS<span style="color:#e6db74">&#34;</span> -gt <span style="color:#ae81ff">0</span> <span style="color:#f92672">]</span>; <span style="color:#66d9ef">then</span>
+    printf <span style="color:#e6db74">&#34;^b%s^&#34;</span> <span style="color:#66d9ef">$(</span>xgetres slstatus.color2<span style="color:#66d9ef">)</span>
+    printf <span style="color:#e6db74">&#34;^c%s^&#34;</span> <span style="color:#66d9ef">$(</span>xgetres slstatus.background<span style="color:#66d9ef">)</span>
+    printf <span style="color:#e6db74">&#34; ﯬ %s&#34;</span> $NEWMAILS
+<span style="color:#66d9ef">else</span>
+    <span style="color:#75715e"># If there are no new mails then print a block the same color</span>
+    <span style="color:#75715e"># as the background. This is because slstatus will show the previous</span>
+    <span style="color:#75715e"># color if it is not overwriten</span>
+    printf <span style="color:#e6db74">&#34;^c%s^^b%s^placeholder^d^&#34;</span> <span style="color:#66d9ef">$(</span>xgetres slstatus.background<span style="color:#66d9ef">)</span> <span style="color:#66d9ef">$(</span>xgetres slstatus.background<span style="color:#66d9ef">)</span>
+<span style="color:#66d9ef">fi</span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+Conclusions
+</h2>
+<div id="outline-text-headline-5" class="outline-text-2">
+<p>I have been reading and writing emails this way for the past couple of weeks and
+I could be happier. Namely I haven&#39;t really researched how to attach files to
+email and when sending emails back and forth from two accounts that <code>mu4e</code> is
+tracking it can get a little confusing. Apart from that, however, I am
+satisfied with the workflow that these config files set up.</p>
+</div>
+</div>
+]]></content></item><item><title>Dependency Tree Collapse for N-Gram Generation</title><link>www.alexday.me/posts/dependency-tree-collapse/</link><pubDate>Wed, 06 Nov 2019 00:00:00 +0000</pubDate><guid>www.alexday.me/posts/dependency-tree-collapse/</guid><description>Introduction Throughout the past semester I have been working on my senior capstone project for my CS undergraduate. The project is to create Emoji summaries for sentences and one of the integral parts of this algorithm is separating a sentence into a sequence of n-grams that represent it. In the initial algorithm, I took a naive approach of generating every single combination of n-grams, summarizing them all, and then returning the summary with the highest result.</description><content type="html"><![CDATA[
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Introduction
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>Throughout the past semester I have been working on my senior capstone project
+for my CS undergraduate. The project is to create Emoji summaries
+for sentences and one of the integral parts of this algorithm is separating a
+sentence into a sequence of n-grams that represent it. In the initial algorithm,
+I took a naive approach of generating every single combination of n-grams,
+summarizing them all, and then returning the summary with the highest result.
+While this worked it did have some downsides. The main disadvantage of attacking
+the problem in this way was some of the n-grams contained two big ideas from the
+sentence and they were only getting translated to one Emoji. It was clear that
+this was not ideal. The approach detailed within this post uses information
+about the dependencies between words within the sentence in hopes that this will
+produce an output that is more representative.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+Dependency Trees
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>Dependency trees are a way to map the dependencies of words within a sentence.
+The example in figure 1 maps the dependencies within the sentence &#34;I finished my
+homework just before the class started&#34;. Because the node containing &#34;I&#34; is a
+child of the &#34;finished&#34; node there is a direct relation between the two words.
+In this case &#34;I&#34; is the object that actually &#34;finished&#34; something. In this
+dependency tree (and in the algorithm) the actual relations that link words
+together are neither shown or used.</p>
+<p>
+<figure>
+    <img src="/img/tree_collapse/syntax.png"
+         alt="A tree-like structure containing a sentence with the parts of speech of each word label as well as the dependencies shown by edges"/> <figcaption>
+            <p>Dependency tree for an example sentence</p>
+        </figcaption>
+</figure>
+</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+Rules for Collapse
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>The primary assumption behind this algorithm is that some dependencies can be collapsed, or
+simplified to produce larger n-grams that make up the sentence. As of right now the algorithm
+only executes two rules but it is easy to imagine other rules that could be used. The rules
+are as follows:</p>
+<ol>
+<li>
+<p>If a node has only one child then the two nodes can be combined into one</p>
+</li>
+<li>
+<p>If multiple leaves are on the same level and have the same parent then they can be combined into one node</p>
+</li>
+</ol>
+<div id="outline-container-headline-4" class="outline-3">
+<h3 id="headline-4">
+Child Dependency
+</h3>
+<div id="outline-text-headline-4" class="outline-text-3">
+<p><figure>
+    <img src="/img/tree_collapse/child_step_one.png"
+         alt="The same tree from above except there is a direct node to node relation with no other children. These two nodes are n-gramed"/> <figcaption>
+            <p>The same tree from above except there is a direct node to node relation with no other children. These two nodes are n-gramed</p>
+        </figcaption>
+</figure>
+
+<figure>
+    <img src="/img/tree_collapse/child_step_two.png"
+         alt="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node"/> <figcaption>
+            <p>The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node</p>
+        </figcaption>
+</figure>
+</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-3">
+<h3 id="headline-5">
+Neighbor dependency
+</h3>
+<div id="outline-text-headline-5" class="outline-text-3">
+<p><figure>
+    <img src="/img/tree_collapse/neighbor_step_one.png"
+         alt="The same tree from above except there are nodes highlighted that are neighbors on the leaf level. These two nodes are n-gramed"/> <figcaption>
+            <p>The same tree from above except there are nodes highlighted that are neighbors on the leaf level. These two nodes are n-gramed</p>
+        </figcaption>
+</figure>
+
+<figure>
+    <img src="/img/tree_collapse/neighbor_step_two.png"
+         alt="The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node"/> <figcaption>
+            <p>The same tree as in the image above but the two n-gramed nodes have been collapsed and are now just one node</p>
+        </figcaption>
+</figure>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+Results
+</h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<p>This algorithm is used directly in the sentence to Emoji algorithm, so it makes the most
+sense to present results as relative to its&#39; application. Table 1 below shows the
+results from the old exhaustive n-gram sequencing algorithm as compared to this
+dependency relation informed algorithm.</p>
+<table>
+<thead>
+<tr>
+<th>Sentence</th>
+<th>Exhaustive</th>
+<th>Dependency Tree</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The student drew a snowflake on the chalk board</td>
+<td><code>The student drew</code> <code>a</code> <code>snowflake</code> <code>on</code> <code>the chalk board</code></td>
+<td><code>The student</code> <code>drew</code> <code>a snowflake</code> <code>the chalk</code> <code>on board</code></td>
+</tr>
+<tr>
+<td>I finished the homework just before class started</td>
+<td><code>I</code> <code>finished the homework just before class started</code></td>
+<td><code>I</code> <code>finished</code> <code>the homework</code> <code>just before class</code> <code>started</code></td>
+</tr>
+<tr>
+<td>Can you calculate the number of giraffes that have ever existed?</td>
+<td><code>can</code> <code>you calculate the number of giraffe that have ever existed</code></td>
+<td><code>can you</code> <code>calculate</code> <code>number</code> <code>that have ever</code> <code>of giraffes existed</code></td>
+</tr>
+</tbody>
+</table>
+<p>
+It is relatively clear that the tree collapse n-gram generation gives a more comprehensive
+n-gram sequence for the sentence. However, this may be more of a reflection of the naive-ness
+of our initial algorithm. The exhaustive algorithm relies entirely on the dataset that is
+used for the output Emoji. The lacklustre dataset is something that will be improved shortly.</p>
+</div>
+</div>
+<div id="outline-container-headline-7" class="outline-2">
+<h2 id="headline-7">
+Implementation
+</h2>
+<div id="outline-text-headline-7" class="outline-text-2">
+<p>Below, in figure 5, is the algorithm implemented in Python 3 with spaCy and
+NLTK. The general flow of the algorithm is that it performs the collapses
+detailed above and returns a list of lists. Each list within the result is
+an n-gram split into its&#39; constituent words. It is implemented as such so
+the word can also contain the initial location of the word within the input
+so it can later be sorted. Sorting is trivial and it (along with the rest of the code) is contained within
+<a href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/blob/master/JupyterNotebooks/PartOfSpeech.ipynb">this Juypter notebook</a> within the <a href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/">algorithms repo</a>.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pos_n_gram_sequence</span>(node, n_grams<span style="color:#f92672">=</span>None):
+    <span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">    Turn the sentence given into an n-gram sequence informed
+</span><span style="color:#e6db74">    by part of speech tagging
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        node(Token or str): Root token for the sentence or the
+</span><span style="color:#e6db74">                    sentence as a string if first run through
+</span><span style="color:#e6db74">        n_grams(List, Optional): List of n-grams for recursion
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    <span style="color:#75715e"># Check if the n_grams list is none. If so it is the</span>
+    <span style="color:#75715e"># first run through of the function then set up the</span>
+    <span style="color:#75715e"># list and the sentence as an spaCy NLP root node.</span>
+    <span style="color:#75715e"># We do it with none because python gets</span>
+    <span style="color:#75715e"># slightly weird if you do this with an empty list</span>
+    <span style="color:#66d9ef">if</span> n_grams <span style="color:#f92672">is</span> None:
+        n_grams <span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">if</span> type(node) <span style="color:#f92672">is</span> str:
+        node <span style="color:#f92672">=</span> list(nlp(node)<span style="color:#f92672">.</span>sents)[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">.</span>root
+
+    <span style="color:#75715e"># Rule 1.</span>
+    <span style="color:#75715e"># While the current node only has one child append the</span>
+    <span style="color:#75715e"># data from the current node to a backlog list and then</span>
+    <span style="color:#75715e"># loop down to the next node, checking it&#39;s child count</span>
+    <span style="color:#75715e"># so on and so forth</span>
+    current_node <span style="color:#f92672">=</span> node
+    parent_child_data <span style="color:#f92672">=</span> []
+    <span style="color:#66d9ef">while</span> current_node<span style="color:#f92672">.</span>n_lefts <span style="color:#f92672">+</span> current_node<span style="color:#f92672">.</span>n_rights <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+        <span style="color:#75715e"># Appending both the node&#39;s token and its&#39; position in the</span>
+        <span style="color:#75715e"># sentence so we can sort later</span>
+        parent_child_data<span style="color:#f92672">.</span>append((current_node<span style="color:#f92672">.</span>orth_, current_node<span style="color:#f92672">.</span>i))
+        <span style="color:#75715e"># Set the current node to the only child of the current node</span>
+        current_node <span style="color:#f92672">=</span> list(current_node<span style="color:#f92672">.</span>children)[<span style="color:#ae81ff">0</span>]
+
+    <span style="color:#75715e"># Add the current node&#39;s data to the parent-child dependency</span>
+    <span style="color:#75715e"># list so we can just add this to the result later</span>
+    parent_child_data<span style="color:#f92672">.</span>append((current_node<span style="color:#f92672">.</span>orth_, current_node<span style="color:#f92672">.</span>i))
+    n_grams<span style="color:#f92672">.</span>append(parent_child_data)
+
+    <span style="color:#75715e"># Rule 2. will only work if the current node has more than one</span>
+    <span style="color:#75715e"># child. If it has less than that then we already appended</span>
+    <span style="color:#75715e"># everything relevant to the list</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> current_node<span style="color:#f92672">.</span>n_lefts <span style="color:#f92672">+</span> current_node<span style="color:#f92672">.</span>n_rights <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+        <span style="color:#66d9ef">return</span>
+
+    <span style="color:#75715e"># Get the children of the current node that have children</span>
+    children_with_children <span style="color:#f92672">=</span> [child <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> current_node<span style="color:#f92672">.</span>children
+                            <span style="color:#66d9ef">if</span> len(list(child<span style="color:#f92672">.</span>children)) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>]
+
+    <span style="color:#75715e"># Leaves are nodes that don&#39;t have children. Any children</span>
+    <span style="color:#75715e"># of the current node that are not in the</span>
+    <span style="color:#75715e"># children_with_children list are leaves and should be</span>
+    <span style="color:#75715e"># collapsed</span>
+    leafs <span style="color:#f92672">=</span> [(child<span style="color:#f92672">.</span>orth_, child<span style="color:#f92672">.</span>i)
+            <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> current_node<span style="color:#f92672">.</span>children
+            <span style="color:#66d9ef">if</span> child <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> children_with_children]
+
+    <span style="color:#75715e"># Append the leafs to the n_grams</span>
+    n_grams<span style="color:#f92672">.</span>append(leafs)
+
+    <span style="color:#75715e"># Recurse through all the non-leaf children</span>
+    <span style="color:#66d9ef">for</span> child <span style="color:#f92672">in</span> children_with_children:
+        pos_n_gram_sequence(child, n_grams)
+
+    <span style="color:#66d9ef">return</span> n_grams</code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-8" class="outline-2">
+<h2 id="headline-8">
+Future Work
+</h2>
+<div id="outline-text-headline-8" class="outline-text-2">
+<p>The one main future iteration for this algorithm involves generating more potential n-gram
+sequences. The current implementation only collapses the tree once to produce one n-gram
+sequence but it wouldn&#39;t be that hard to further collapse the tree to produce more. This
+further collapse could prove to improve the summary for longer sentences and could be combined
+with other n-gram sequence scoring techniques.</p>
+</div>
+</div>
+<div id="outline-container-headline-9" class="outline-2">
+<h2 id="headline-9">
+Related Reading and Works
+</h2>
+<div id="outline-text-headline-9" class="outline-text-2">
+<ul>
+<li>
+<p><a href="http://tomato.banatao.berkeley.edu:8080/parser/parser.html">Online Dependency Tree Parser</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Part-of-speech_tagging">Part of Speech Tagging on Wikipedia</a></p>
+</li>
+<li>
+<p><a href="https://spacy.io/usage/linguistic-features#pos-tagging">Part of Speech Tagging in spaCy</a></p>
+</li>
+<li>
+<p><a href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation/blob/df18176149970e0143d38ee2aacfc658e0b4f56c/EmojiTranslation/Translators.py#L381">Part of Speech Tagging Translator Code (as of 11/11/19)</a></p>
+</li>
+</ul>
+</div>
+</div>
+]]></content></item><item><title>Naive Sentence to Emoji Translation</title><link>www.alexday.me/posts/naive-emoji-summarization/</link><pubDate>Mon, 07 Oct 2019 00:00:00 +0000</pubDate><guid>www.alexday.me/posts/naive-emoji-summarization/</guid><description>Motivation My senior capstone project for my computer science degree is research focused on summarizing sentences. My group mate and I decided to try and accomplish this by converting sentences into Emoji. We think that this will produce a more information-dense string. This problem is rather similar to a plethora of different problems in computer science and other, unrelated, domains. Within computer science, it is adjacent to the Emoji prediction and Emoji embedding problems.</description><content type="html"><![CDATA[
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Motivation
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>My senior capstone project for my computer science degree is research focused on
+summarizing sentences. My group mate and I decided to try and accomplish this by
+converting sentences into Emoji. We think that this will produce a more
+information-dense string. This problem is rather similar to a plethora of
+different problems in computer science and other, unrelated, domains. Within
+computer science, it is adjacent to the Emoji prediction and Emoji embedding
+problems. Outside of our domain, it is similar to problems involving
+translations to, and from, ideographic languages. This algorithm is the first
+shot at implementation after a short-ish literature review.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+Methodology
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>Before the rest of the algorithm is explained, it is important to understand the
+underlying technology. sent2vec is a model that is used to generate a vector
+embedding of a sentence. This vector embedding is an array containing 700 floats
+that place the meaning of the sentence into a vector space. The main use of
+sent2vec in this algorithm is to determine the closeness of two sentences using
+the <a href="https://en.wikipedia.org/wiki/Cosine_similarity">cosine similarity</a>.</p>
+<p>
+The general idea behind the algorithm is that a sentence can be split into a
+series of n-grams such that each n-gram maximizes the cosine similarity between
+itself and an Emoji definition in the sent2vec vector space. For example: the
+sentence <code>&#34;Christmas music rings from the clock tower&#34;</code> may be split into the
+following n-grams: <code>[&#39;Christmas&#39;, &#39;music&#39;, &#39;ring&#39;, &#39;from the clock tower&#39;]</code> with
+these individual n-grams being close in the sent2vec space to the following
+Emoji <code>[&#34;🎄&#34;, &#34;🎻&#34;, &#34;💍&#34;, &#34;🏫&#34;]</code>. Currently, each possible combination of
+n-grams is generated and queried to see which combination gives the lowest
+average cosine distance.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+Algorithm
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>The actual algorithm contains three main parts. First, Emoji are loaded into a
+list of 2-tuples with the values of the pair being the Emoji and vector
+representation of that Emoji description. The Emoji descriptions were acquired
+from the <a href="https://github.com/uclnlp/emoji2vec/blob/master/data/raw_training_data/emoji_joined.txt">emoji_joined.txt</a> file found in the data dir in the <a href="https://github.com/uclmr/emoji2vec">emoji2vec repo</a>. The
+sent2vec model is the <code>wiki_unigrams</code> model found in the <a href="https://github.com/epfml/sent2vec">sent2vec repo</a>.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Define the array to store the (emoji, repr) 2-tuple</span>
+emoji_embeddings <span style="color:#f92672">=</span> []
+<span style="color:#75715e"># Open the file that stores the emoji, description 2-tuple list</span>
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;emoji_joined.txt&#34;</span>) <span style="color:#66d9ef">as</span> emojis:
+    <span style="color:#66d9ef">for</span> defn <span style="color:#f92672">in</span> emojis:
+        <span style="color:#75715e"># The file is tab-delim</span>
+        split <span style="color:#f92672">=</span> defn<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#34;</span>)
+
+        <span style="color:#75715e"># Get the emoji and the description from the current line</span>
+        emoji <span style="color:#f92672">=</span> split[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>)
+        desc <span style="color:#f92672">=</span> split[<span style="color:#ae81ff">0</span>]
+
+        <span style="color:#75715e"># Add each emoji and embedded description to the list</span>
+        emoji_embeddings<span style="color:#f92672">.</span>append((emoji, s2v<span style="color:#f92672">.</span>embed_sentence(desc)))</code></pre></div>
+</div>
+<p>
+The second part of the algorithm is the <code>closest_emoji</code> function. This takes in
+a sentence and returns the Emoji with the most similar description embedding in
+the vector space. This function has the <code>@lru_cache</code> decorator which means the
+last 100 function return values will be cached. This is cleared after each
+summary is finished</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@lru_cache</span>(maxsize<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">closest_emoji</span>(sent: str) <span style="color:#f92672">-&gt;</span> Tuple[str, int]:
+    <span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">    Get the closest emoji to the given sentence
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        sent(List[str]): Sentence to check
+</span><span style="color:#e6db74">    Ret:
+</span><span style="color:#e6db74">        (Tuple[str, int]) Closest emoji, the respective cosine similarity
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+
+    <span style="color:#75715e"># Embed the sentence using sent2vec</span>
+    emb <span style="color:#f92672">=</span> s2v<span style="color:#f92672">.</span>embed_sentence(sent)
+
+    <span style="color:#75715e"># Start the lowest cosine at higher than it could ever be</span>
+    lowest_cos <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>_000_000
+
+    <span style="color:#75715e"># The best emoji starts as an empty string placeholder</span>
+    best_emoji <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+
+    <span style="color:#75715e"># Loop through the dictionary</span>
+    <span style="color:#66d9ef">for</span> emoji <span style="color:#f92672">in</span> emoji_embeddings:
+        <span style="color:#75715e"># Get the current emoji&#39;s embedding</span>
+        emoji_emb <span style="color:#f92672">=</span> emoji[<span style="color:#ae81ff">1</span>]
+
+        <span style="color:#75715e"># Check the cosine difference between the emoji&#39;s embedding and</span>
+        <span style="color:#75715e"># the sentence&#39;s embedding</span>
+        curr_cos <span style="color:#f92672">=</span> cosine(emoji_emb, emb)
+
+        <span style="color:#75715e"># If it lower than the lowest then it is the new best</span>
+        <span style="color:#66d9ef">if</span> curr_cos <span style="color:#f92672">&lt;</span> lowest_cos:
+            lowest_cos <span style="color:#f92672">=</span> curr_cos
+            best_emoji <span style="color:#f92672">=</span> emoji[<span style="color:#ae81ff">0</span>]
+
+    <span style="color:#75715e"># Return a 2-tuple containing the best emoji and its cosine differnece</span>
+    <span style="color:#66d9ef">return</span> best_emoji, lowest_cos</code></pre></div>
+</div>
+<p>
+The third (and most important) function in the algorithm is the actual
+summarization function. This function loops through each possible n-gram
+combination and then returns the Emoji, the cosine difference (labeled as
+uncertainty), and the n-grams of the combo with the lowest average cosine
+difference for each n-gram.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">summarize</span>(sent:str) <span style="color:#f92672">-&gt;</span> Tuple[List[str], List[float], List[str]]:
+    <span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">    Summarize the given sentence into emojis
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        sent(str): Sentence to summarize
+</span><span style="color:#e6db74">    Rets:
+</span><span style="color:#e6db74">        (Tuple[List[str], List[float], List[str]]): (Emoji Sentence,
+</span><span style="color:#e6db74">        List of Uncertainty values for the corresponding emoji,
+</span><span style="color:#e6db74">        list of n-grams used to generate the corresponding emoji)
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    <span style="color:#75715e"># Clean the sentence</span>
+    sent <span style="color:#f92672">=</span> clean_sentence(sent)
+
+    <span style="color:#75715e"># Generate all combinations of sentences</span>
+    sent_combos <span style="color:#f92672">=</span> combinations_of_sent(sent)
+    <span style="color:#75715e"># Init &#34;best&#34; datamembers as empty or exceedingly high</span>
+    best_emojis <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+    best_n_grams <span style="color:#f92672">=</span> []
+    best_uncertainties <span style="color:#f92672">=</span> [<span style="color:#ae81ff">100</span>_000_000]
+    <span style="color:#75715e"># Iterate through every combination of sentence combos</span>
+    <span style="color:#66d9ef">for</span> sent_combo <span style="color:#f92672">in</span> sent_combos:
+        <span style="color:#75715e"># Start the local data members as empty</span>
+        emojis <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+        uncertainties <span style="color:#f92672">=</span> []
+        <span style="color:#75715e"># Iterate through each n_gram adding the uncertainty and</span>
+        <span style="color:#75715e"># emoji to the lists</span>
+        <span style="color:#66d9ef">for</span> n_gram <span style="color:#f92672">in</span> sent_combo:
+            close_emoji, cos_diff <span style="color:#f92672">=</span> closest_emoji(n_gram)
+            emojis <span style="color:#f92672">+=</span> close_emoji
+            uncertainties<span style="color:#f92672">.</span>append(cos_diff)
+
+        <span style="color:#75715e"># Check if the average uncertainty is less than the best</span>
+        <span style="color:#75715e"># TODO: Maybe a median check would be helpful as well?</span>
+        <span style="color:#66d9ef">if</span> (sum(uncertainties)<span style="color:#f92672">/</span>len(uncertainties) <span style="color:#f92672">&lt;</span>
+            sum(best_uncertainties)<span style="color:#f92672">/</span>len(best_uncertainties)):
+            <span style="color:#75715e"># Update the best emojis</span>
+            best_emojis <span style="color:#f92672">=</span> emojis
+            best_n_grams <span style="color:#f92672">=</span> sent_combo
+            best_uncertainties <span style="color:#f92672">=</span> uncertainties[:]
+
+    <span style="color:#75715e"># Clear the function cache on closest_emoji because it is unlikely</span>
+    <span style="color:#75715e"># the next run will make use of them</span>
+    closest_emoji<span style="color:#f92672">.</span>cache_clear()
+
+    <span style="color:#75715e"># Return the emoji &#34;sentence&#34;, list of all the cosine similarities,</span>
+    <span style="color:#75715e"># and all of the n-grams</span>
+    <span style="color:#66d9ef">return</span> (best_emojis, best_uncertainties, best_n_grams)</code></pre></div>
+</div>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Downsides
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>
+The major downfall of this algorithm is the lack of data that it is currently
+using. There are 1661 Emoji in the corpus and only 6088 definitions, which gives
+an average of \(\approx\) 4 definitions per Emoji. When you put that in the context of
+700 dimensional space that&#39;s not much variation. If more data was used the
+vector space would become more populated and each n-gram would have a closer
+Emoji. Putting the limits on the dataset aside this algorithm is still
+incredibly slow. The major flaw of searching every single combination of words
+in a sentence is the time it takes. It&#39;s about 5 seconds for a sentence that is
+6 words long, and the curve it follows after that is not pretty. I can see no
+smart or quick way of speeding this up. Maybe genetic algorithms? Maybe harder
+caching? If you have any ideas please <a href="mailto:alex@alexday.me">reach out to me</a>.</p>
+</div>
+</div>
+<div id="outline-container-headline-5" class="outline-2">
+<h2 id="headline-5">
+Results
+</h2>
+<div id="outline-text-headline-5" class="outline-text-2">
+<p>Here is a look at some of the more accurate results. The less accurate ones are just garbage.</p>
+<table>
+<thead>
+<tr>
+<th>Input Sentence</th>
+<th class="align-right">Similarity</th>
+<th>n-grams</th>
+<th>Output Emojis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>christmas music rings from the clock tower</td>
+<td class="align-right">0.983</td>
+<td><code>christmas</code>, <code>music</code>, <code>ring</code>, <code>from the clock tower</code></td>
+<td>🎄🎻💍🏫</td>
+</tr>
+<tr>
+<td>It isn&#39;t perfect but it is a start</td>
+<td class="align-right">0.818</td>
+<td><code>it is n&#39;t</code>, <code>perfect but it is</code>, <code>a</code>, <code>start</code></td>
+<td>🙅💯💯🌱</td>
+</tr>
+<tr>
+<td>The sun is rising over new york city</td>
+<td class="align-right">0.881</td>
+<td><code>the sun is rising over</code>, <code>new york</code>, <code>city</code></td>
+<td>🌄🗽🚏</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="outline-container-headline-6" class="outline-2">
+<h2 id="headline-6">
+Conclusion
+</h2>
+<div id="outline-text-headline-6" class="outline-text-2">
+<p>
+This algorithm fits some of the requirements we set out to fill but there is
+still so much to be done. For starters the training could be improved. Right now
+we are only training off of short descriptions of the emoji. I think if we
+expanded to more datasets (maybe <a href="http://reddit.com/r/emojipasta">/r/emojipasta</a> or something similar) it
+may have a better shot at transcribing more sentences. Either way it is a good
+jumping off point into the world of English \(\rightarrow\) Emoji translation. The entire
+jupyter notebook that I used for this algorithm is available in this
+<a href="https://github.com/AlexanderDavid/NaiveSentenceEmojiTranslation">github repo</a>.</p>
+</div>
+</div>
+]]></content></item><item><title>TF-IDF and Document Summarization</title><link>www.alexday.me/posts/tf-idf/</link><pubDate>Thu, 25 Apr 2019 00:00:00 +0000</pubDate><guid>www.alexday.me/posts/tf-idf/</guid><description>Term Frequency-Inverse Document Frequency (commonly abbreviated as TF-IDF) is a formula commonly used in Natural Language Processing (NLP) to determine the relative importance of a word. The formula is comprised of two sub-formulas, term frequency and inverse document frequency. The basic assumption of this formula is that if a word appears more in one document and less in every other document in the corpus then it is very important to that specific document.</description><content type="html"><![CDATA[
+<p>
+Term Frequency-Inverse Document Frequency (commonly abbreviated as TF-IDF) is a
+formula commonly used in Natural Language Processing (NLP) to determine the
+relative importance of a word. The formula is comprised of two sub-formulas,
+term frequency and inverse document frequency. The basic assumption of this
+formula is that if a word appears more in one document and less in every other
+document in the corpus then it is very important to that specific document. In
+the following sections I will be describing and giving examples of the two parts
+of the formula, explaining how they are combined, and then giving an example of
+how to use this to summarize a whole document. This work is based off of the
+content in my <a href="/pdf/extractive.pdf">paper on extractive summarization
+methods</a>.</p>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Term Frequency
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>
+The term frequency of a term within a document can be described simply as a raw
+count of how many times the term appears within the document, this is shown
+below.</p>
+<p>
+$$ tf(t, d) = f_{t, d} $$</p>
+<p>
+Where \(t\) is the term to search for and \(d\) is the document to search in.</p>
+<p>
+This means that if the word <code>cat</code> shows up in your document 10 times then
+\(tf(``cat&#34;, document) = 10\). There are other ways to calculate the term
+frequency, these include binary frequencies (1 if the word is in the document
+else 0), frequencies scaled by document length, and others. <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition">Wikipedia</a> has more
+information on different formulas for TF.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+Inverse Document Frequency
+</h2>
+<div id="outline-text-headline-2" class="outline-text-2">
+<p>This means that if the word <code>cat</code> shows up in your document 10 times then
+\(tf(&#39;&#39;cat&#39;&#39;, document) = 10\). There are other ways to calculate the term
+frequency, these include binary frequencies (1 if the word is in the document
+else 0), frequencies scaled by document length, and others. <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Definition">Wikipedia</a> has more
+information on different formulas for IDF. The inverse document frequency can be
+thought of as an offset that makes sure words such as <code>the</code>, <code>an</code>, <code>and</code>, etc.
+do not get large term importance scores. The idf score is lower for a word that
+is used throughout the corpus and higher for a word that is used in only one or
+two different documents. The equation can be seen below.</p>
+<p>
+$$ idf(t, D) = log(\frac{|D|}{|\{d \in D : t \in d\}|}) $$</p>
+<p>
+Where <code>t</code> is the term to search for and <code>D</code> is the set of all documents within the corpus.</p>
+</div>
+</div>
+<div id="outline-container-headline-3" class="outline-2">
+<h2 id="headline-3">
+Putting it all Together
+</h2>
+<div id="outline-text-headline-3" class="outline-text-2">
+<p>
+To calculate the TF-IDF of a term the TF and IDF scores of a word are multiplied together.</p>
+<p>
+$$ tf-idf_{term}(t, d, D) = tf(t, d) \times idf(t, D) $$</p>
+<p>
+Because TF-IDF cannot be applied to a sentence as a whole we make the assumption
+that if a sum score of all the words in a sentence is high then the sentences
+relevance is also high. This is seen in the equation below.</p>
+<p>
+$$ tf-idf_{sentence}(S,d, D) = \frac{1}{|S|} \times \sum_{t \in S}tf-idf_{term}(t, d, D) $$</p>
+<p>
+Using this you can rank the sentences of a document within a corpus. For
+example, when run over the whole Moby Dick corpus the top 3 most important
+sentences in chapter one are as follows:</p>
+<ol>
+<li>
+<p>On the contrary, passengers themselves must pay.</p>
+</li>
+<li>
+<p>Whaling voyage by one Ishmael.</p>
+</li>
+<li>
+<p>For to go as a passenger you must needs have a purse, and a purse is but a rag unless you have something in it.</p>
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-headline-4" class="outline-2">
+<h2 id="headline-4">
+Conclusions
+</h2>
+<div id="outline-text-headline-4" class="outline-text-2">
+<p>TF-IDF is a good way to quickly decide on important sentences within a document.
+It is used by the <a href="https://www.reddit.com/user/autotldr">autoTLDR</a> bot on Reddit. However, because the algorithm cannot
+shorten any sentences nor can it understand the information it will never
+produce good sumaries across the board.</p>
+</div>
+</div>
+]]></content></item></channel></rss>
