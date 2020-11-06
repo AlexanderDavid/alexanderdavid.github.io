@@ -1,0 +1,5 @@
+#+title: iCal2Notion
+#+date: 2020-11-05T22:24:55-05:00
+#+tags: python
+
+Earlier this year I decided that I needed some sort of hub for the tasks and events in my life. I decided at that point to go with [[https://notion.so][Notion]] (although I have now switched to org-mode in emacs). One feature that notion is lacking is the ability to pull in events from Google Calendar into a database. I noticed that there were no tools that did this so I decided to roll my own. I used the unofficial notion python API along with an `.ical` parser to produce a command line tool that allowed the user to upload .ical events from the URL google provides into a specified notion database. The code and documentation is on my [[https://github.com/AlexanderDavid/ical2notion][github]] and the project is available for download through pip by running ~pip install ical2notion~.
