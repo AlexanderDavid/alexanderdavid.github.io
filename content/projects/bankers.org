@@ -4,7 +4,7 @@
 
 Banker's Algorithm implemented in Python3 with a Flask RESTful backend and
 HTML/Bootstrap/JS front end. The site is hosted on Heroku at
-[[https://bankers.alexday.me]].
+[[http://bankers.alexday.me]].
 
 * Usage
 This was a project for the Operating Systems class at Clarion. This project had
