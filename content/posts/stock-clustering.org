@@ -1,7 +1,6 @@
 #+title: Stock Clustering
 #+date: 2020-05-20T23:41:25-04:00
 #+tags[]:
-#+draft: true
 #+description: Clustering stock descriptions by their descriptions
 
 One of the problems in Natural Language Processing (and a problem I'm facing at work) is how to cluster documents into groups based on their contents. There are two broad approaches to solving the document clustering problem, supervised and unsupervised machine learning. Supervised machine learning relies on labeled data and unsupervised learning tries to categorize the data without any prior labels. These two methods both have their ups and downs that I will not go into here. For the task of clustering stock descriptions we will be using unsupervised clustering, more specifically k-means clustering.
@@ -62,10 +61,12 @@ plt.show()
 Then we can sort the stocks into their predicted classes.
 
 #+BEGIN_SRC python :session stocks
-# Sort the stocks into clusters
-clusters = defaultdict(list)
+# Train the KMeans clusterer with the specified k
 kmeans = KMeans(n_clusters=13, random_state=0)
 predictions = kmeans.fit_predict(tf_idf_matrix)
+
+# Gather all clusters and their stocks
+clusters = defaultdict(list)
 for i, prediction in enumerate(predictions):
     clusters[prediction].append(stocks[i])
 #+END_SRC
@@ -83,7 +84,7 @@ def pretty_print_cluster(cluster_number: int) -> None:
     print("Keywords:")
     print("\n".join(top_words(cluster_number)))
     print("\nStock Descriptions:")
-    print("\n\n".join(stock[1] for stock in clusters[cluster_number]))
+    print("\n".join(stock[1] for stock in clusters[cluster_number]))
 
 pretty_print_cluster(5)
 #+END_SRC
@@ -104,8 +105,10 @@ Stock Descriptions:
 
 - Anthem, Inc. provides life, hospital and medical insurance plans. It offers a broad spectrum of network-based managed care health benefit plans to the large and small employer, individual, Medicaid, and Medicare markets...
 
-- ...
+- and more...
 
+* Conclusions
+TF-IDF clustering is a naive, yet computationally inexpensive way of grouping similar documents. It is by no means the current state of the art but there are still a lot of uses for it in natural language processing. It is also a good project to start to draw links between natural language processing and more traditional machine learning algorithms like k-means.
 
 * Footnotes
 
