@@ -25,6 +25,180 @@ This is the actual capture template. This just creates a new item in my inbox wi
 </div>
 </div>
 </div>
+]]></content></item><item><title>Stock Clustering</title><link>https://www.alexday.me/posts/stock-clustering/</link><pubDate>Wed, 20 May 2020 23:41:25 -0400</pubDate><guid>https://www.alexday.me/posts/stock-clustering/</guid><description>One of the problems in Natural Language Processing (and a problem I&amp;#39;m facing at work) is how to cluster documents into groups based on their contents. There are two broad approaches to solving the document clustering problem, supervised and unsupervised machine learning. Supervised machine learning relies on labeled data and unsupervised learning tries to categorize the data without any prior labels. These two methods both have their ups and downs that I will not go into here.</description><content type="html"><![CDATA[
+<p>
+One of the problems in Natural Language Processing (and a problem I&#39;m facing at work) is how to cluster documents into groups based on their contents. There are two broad approaches to solving the document clustering problem, supervised and unsupervised machine learning. Supervised machine learning relies on labeled data and unsupervised learning tries to categorize the data without any prior labels. These two methods both have their ups and downs that I will not go into here. For the task of clustering stock descriptions we will be using unsupervised clustering, more specifically k-means clustering.</p>
+<p>
+The starting point for the dataset is the <a href="https://raw.githubusercontent.com/AlexanderDavid/Stock-Description-Clustering/master/s_and_p.txt">S&amp;P 500 list</a>. Using this list I made a <a href="https://raw.githubusercontent.com/AlexanderDavid/Stock-Description-Clustering/master/download_stocks.sh">small script</a> to download the descriptions of the stocks from Robinhood. The format of the resulting tab separated file can be seen in the table below.</p>
+<table>
+<tbody>
+<tr>
+<td>AAP</td>
+<td>Advance Auto Parts, Inc. engages in the supply and distribution of aftermarket automot…</td>
+</tr>
+<tr>
+<td>CVS</td>
+<td>CVS Health Corp. engages in the provision of health care services. It operates through…</td>
+</tr>
+<tr>
+<td>WMB</td>
+<td>The Williams Cos., Inc. operates as an energy infrastructure company, which explores,…</td>
+</tr>
+<tr>
+<td>GOOG</td>
+<td>Alphabet, Inc. is a holding company, which engages in the business of acquisition and…</td>
+</tr>
+<tr>
+<td>MSFT</td>
+<td>Microsoft Corp. engages in the development and support of software, services, devices…</td>
+</tr>
+</tbody>
+</table>
+<p>
+Some imports<sup class="footnote-reference"><a id="footnote-reference-1" href="#footnote-1">1</a></sup> are required before we can get going, but then we can collect all the stocks into a list of the ticker name and the descriptions.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Import the data</span>
+<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;stock_descs.tsv&#34;</span>) <span style="color:#66d9ef">as</span> file:
+    stocks <span style="color:#f92672">=</span> [tuple(line<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">&#39;</span>)) <span style="color:#66d9ef">for</span> line <span style="color:#f92672">in</span> file]</code></pre></div>
+</div>
+<p>
+Then we can train a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html">sklearn TfidfVectorizer</a> model on the data and transform all of the descriptions into their tf-idf values for each word in the corpus.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Train TfidfVectorizor</span>
+corpus <span style="color:#f92672">=</span> [stock[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> stock <span style="color:#f92672">in</span> stocks]
+tf_idf <span style="color:#f92672">=</span> TfidfVectorizer(stop_words<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;english&#34;</span>,
+                         preprocessor<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> doc: <span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">.</span>join(preprocess_string(doc)))
+tf_idf_matrix <span style="color:#f92672">=</span> tf_idf<span style="color:#f92672">.</span>fit_transform(corpus)</code></pre></div>
+</div>
+<p>
+We can then train KMeans models with K values ranging from 2 to 30. Using the elbow method we find that the best K value is 13.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Elbow method</span>
+scores <span style="color:#f92672">=</span> []
+ks <span style="color:#f92672">=</span> range(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">30</span>)
+<span style="color:#66d9ef">for</span> k <span style="color:#f92672">in</span> ks:
+    kmeans <span style="color:#f92672">=</span> KMeans(n_clusters<span style="color:#f92672">=</span>k)<span style="color:#f92672">.</span>fit(tf_idf_matrix)
+    kmeans<span style="color:#f92672">.</span>fit(tf_idf_matrix)
+    scores<span style="color:#f92672">.</span>append(kmeans<span style="color:#f92672">.</span>score(tf_idf_matrix))</code></pre></div>
+</div>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Plot the elbow</span>
+plt<span style="color:#f92672">.</span>plot(ks, scores, <span style="color:#e6db74">&#39;bx-&#39;</span>)
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;# Clusters&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;KMeans Score&#39;</span>)
+choice <span style="color:#f92672">=</span> <span style="color:#ae81ff">13</span>
+plt<span style="color:#f92672">.</span>gcf()<span style="color:#f92672">.</span>gca()<span style="color:#f92672">.</span>add_artist(
+    Ellipse((choice, scores[choice<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>]), <span style="color:#ae81ff">1.125</span>, <span style="color:#ae81ff">4</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;r&#39;</span>, fill<span style="color:#f92672">=</span>False, lw<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
+)
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;The Elbow Method showing the optimal k&#39;</span>)
+plt<span style="color:#f92672">.</span>show()</code></pre></div>
+</div>
+<p>
+
+  <img src="/img/stock_clustering_elbow_method.png"  alt="mu4e main menu"  class="center"  style="border-radius: 8px;"  />
+
+</p>
+<p>
+Then we can sort the stocks into their predicted classes.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Train the KMeans clusterer with the specified k</span>
+kmeans <span style="color:#f92672">=</span> KMeans(n_clusters<span style="color:#f92672">=</span><span style="color:#ae81ff">13</span>, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+predictions <span style="color:#f92672">=</span> kmeans<span style="color:#f92672">.</span>fit_predict(tf_idf_matrix)
+
+<span style="color:#75715e"># Gather all clusters and their stocks</span>
+clusters <span style="color:#f92672">=</span> defaultdict(list)
+<span style="color:#66d9ef">for</span> i, prediction <span style="color:#f92672">in</span> enumerate(predictions):
+    clusters[prediction]<span style="color:#f92672">.</span>append(stocks[i])</code></pre></div>
+</div>
+<p>
+And finally print the keywords and descriptions for any given category. In this case I chose category 5 which seems to be some sort of life insurance category.</p>
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">top_words</span>(cluster_number: int) <span style="color:#f92672">-&gt;</span> List[str]:
+    tf_idf_scores <span style="color:#f92672">=</span> tf_idf<span style="color:#f92672">.</span>transform([stock[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> stock <span style="color:#f92672">in</span> clusters[cluster_number]])<span style="color:#f92672">.</span>sum(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+    scored_words <span style="color:#f92672">=</span> [(tf_idf_scores[<span style="color:#ae81ff">0</span>,i], term) <span style="color:#66d9ef">for</span> i, term <span style="color:#f92672">in</span> enumerate(tf_idf<span style="color:#f92672">.</span>get_feature_names())]
+    sorted_words <span style="color:#f92672">=</span> sorted(scored_words, key<span style="color:#f92672">=</span><span style="color:#66d9ef">lambda</span> x: <span style="color:#f92672">-</span>x[<span style="color:#ae81ff">0</span>])
+    <span style="color:#66d9ef">return</span> [word[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> word <span style="color:#f92672">in</span> sorted_words][:<span style="color:#ae81ff">5</span>]
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">pretty_print_cluster</span>(cluster_number: int) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;Keywords:&#34;</span>)
+    <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join(top_words(cluster_number)))
+    <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">Stock Descriptions:&#34;</span>)
+    <span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">.</span>join(stock[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> stock <span style="color:#f92672">in</span> clusters[cluster_number]))
+
+pretty_print_cluster(<span style="color:#ae81ff">5</span>)</code></pre></div>
+</div>
+<p>
+Keywords:</p>
+<ul>
+<li>
+<p>insur</p>
+</li>
+<li>
+<p>life</p>
+</li>
+<li>
+<p>segment</p>
+</li>
+<li>
+<p>individu</p>
+</li>
+<li>
+<p>group</p>
+</li>
+</ul>
+<p>Stock Descriptions:</p>
+<ul>
+<li>
+<p>Aflac, Inc. is a holding company, which engages in the provision financial protection services…</p>
+</li>
+<li>
+<p>The Allstate Corp. engages in the property and casualty insurance business and the sale of life, accident, and health insurance products through its subsidiaries…</p>
+</li>
+<li>
+<p>American International Group, Inc. engages in the provision of a range of property casualty insurance, life insurance, retirement products, and other financial services to commercial and individual customers…</p>
+</li>
+<li>
+<p>Anthem, Inc. provides life, hospital and medical insurance plans. It offers a broad spectrum of network-based managed care health benefit plans to the large and small employer, individual, Medicaid, and Medicare markets…</p>
+</li>
+<li>
+<p>and more…</p>
+</li>
+</ul>
+<div id="outline-container-headline-1" class="outline-2">
+<h2 id="headline-1">
+Conclusions
+</h2>
+<div id="outline-text-headline-1" class="outline-text-2">
+<p>TF-IDF clustering is a naive, yet computationally inexpensive way of grouping similar documents. It is by no means the current state of the art but there are still a lot of uses for it in natural language processing. It is also a good project to start to draw links between natural language processing and more traditional machine learning algorithms like k-means.</p>
+</div>
+</div>
+<div id="outline-container-headline-2" class="outline-2">
+<h2 id="headline-2">
+Footnotes
+</h2>
+</div>
+<div class="footnotes">
+<hr class="footnotes-separatator">
+<div class="footnote-definitions">
+<div class="footnote-definition">
+<sup id="footnote-1"><a href="#footnote-reference-1">1</a></sup>
+<div class="footnote-body">
+<div class="src src-python">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sklearn.feature_extraction.text <span style="color:#f92672">import</span> TfidfVectorizer
+<span style="color:#f92672">from</span> sklearn.cluster <span style="color:#f92672">import</span> KMeans
+<span style="color:#f92672">from</span> scipy.spatial.distance <span style="color:#f92672">import</span> cdist
+<span style="color:#f92672">from</span> random <span style="color:#f92672">import</span> shuffle
+<span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
+<span style="color:#f92672">from</span> matplotlib <span style="color:#f92672">import</span> pyplot <span style="color:#66d9ef">as</span> plt
+<span style="color:#f92672">from</span> matplotlib.patches <span style="color:#f92672">import</span> Ellipse
+<span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> defaultdict
+<span style="color:#f92672">from</span> gensim.parsing <span style="color:#f92672">import</span> preprocess_string
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> List</code></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 ]]></content></item><item><title>GitHub Actions</title><link>https://www.alexday.me/posts/github-actions/</link><pubDate>Mon, 04 May 2020 00:00:00 +0000</pubDate><guid>https://www.alexday.me/posts/github-actions/</guid><description>Easy code is easy to compile and run. That has and always will be true. However, once the code you write spans across multiple classes, files, or even packages it can be hard to properly test, compile, and release this software. Continuous integration (CI) tries to solve this problem. By defining a pipeline of actions to take your code from source to product that run the same way every time.</description><content type="html"><![CDATA[
 <p>
 Easy code is easy to compile and run. That has and always will be true. However,
