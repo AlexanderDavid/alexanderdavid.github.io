@@ -5,7 +5,7 @@
 <div style="width:100%">
       <div style="width: 70%; float:left;padding-right:10px" id="about" >
 {{</rawhtml>}}
-My name is Alex Day. I have a B.S. in computer science from [[https://clarion.edu][Clarion University]] and I'm a currently attending [[https://clemson.edu][Clemson University]] for a Ph.D. in computer science with a focus on path-finding.  In the past I have involved myself in Natural Language Processing research at Clarion and JGMS Inc. and Autonomous Vehicle research at the University of Arizona. In my free time I enjoy grappling, reading, and long walks on the beach. If you want a more formal introduction you can check out my [[/pdf/AlexDayCV.pdf][CV]] or [[/pdf/AlexDayResume.pdf][resume]]. This website will hopefully serve as a place to keep my ramblings and accomplishments.
+My name is Alex Day. I have a B.S. in computer science from [[https://clarion.edu][Clarion University]] and I'm a currently attending [[https://clemson.edu][Clemson University]] for a Ph.D. in computer science with a focus on path-finding.  In the past I have involved myself in Natural Language Processing research at Clarion and JGMS Inc. and Autonomous Vehicle research at the University of Arizona. In my free time I enjoy grappling, reading, and long walks on the beach. If you want a more formal introduction you can check out my [[/pdf/AlexDayCV.pdf][CV]], [[/pdf/AlexDayResume.pdf][resume]], or the [[/json/alexday.json][json file]] that generates them. This website will hopefully serve as a place to keep my ramblings and accomplishments.
 {{<rawhtml>}}
       </div>
         <div id="prof" class="rounded" style="margin-left: 70%">
