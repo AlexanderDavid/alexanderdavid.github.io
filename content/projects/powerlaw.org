@@ -1,0 +1,8 @@
+#+title: Powerlaw C++ Wrapper
+#+date: 2020-11-20
+#+description: Cython wrapper for the official Powerlaw Collision Avoidance C++ implementation
+#+tags[]: python, cython, collision-avoidance
+
+During the course of my research this semester I needed to implement the [[http://motion.cs.umn.edu/PowerLaw/][Powerlaw Collision Avoidance]] model. This is a force-based model to intelligently repel agents based on the time-to-collision, or TTC. There is already an official python implementation however it does not support static obstacle avoidance. In order to implement this into my code I chose to mimic the [[https://github.com/sybrenstuvel/Python-RVO2][Python ORCA Wrapper]] and write my own [[Cython.org][Cython]] wrapper for the official C++ Powerlaw model.
+
+The code is on my [[https://github.com/AlexanderDavid/Powerlaw][GitHub]] along with a simple 2 vs. 1 agent configuration [[https://github.com/AlexanderDavid/Powerlaw/blob/master/Example.py][example]] that mimics some [[https://github.com/AlexanderDavid/Powerlaw/blob/master/Example.cpp][C++ example code]]. The only issue I have found is that python has differing precision in floats than C++ (at least on my machine). This is only an issue when specifying the agent's initial parameters and does not have any actual baring on the underlying simulation. 
