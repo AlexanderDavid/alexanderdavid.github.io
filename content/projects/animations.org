@@ -1,6 +1,7 @@
 #+TITLE: Animations
 #+date: 2019-10-12
 #+description: A couple of animations written in Javascript and Python
+#+draft: t
 
 * Constellations
 This is animation is based on the animation found [[http://slicker.me/javascript/particles.htm][here]]. However, I wrote this
