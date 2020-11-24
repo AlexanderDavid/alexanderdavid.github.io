@@ -19,7 +19,7 @@
     Science Educators</em>. Pennsylvania Computer Information Science Educators.
     <strong>Forthcoming</strong> [<a
         href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation">code</a>]
-        [<a href="/pdf/emoji.pdf">pdf</a>]</p>
+        [<a href="/pdf/emoji.pdf">pdf</a>] [<a href="/ppt/SentenceEmojiTranslation.pptx">slides</a>]</p>
 </div>
 <div id="ref-day19summary">
 <p><strong>Day, Alex</strong>, and Soo Kim. 2019. “A Comparison of Automatic Extractive Text
