@@ -1,0 +1,5 @@
+#+TITLE: Twitter Information Propogation Visualization
+#+date: 2020-12-01
+#+description: Visualization of misinformation spread on twitter
+
+For my final project in Data Visualization myself and two team members prepared an interactive website powered by d3 to visualize information spread. The result of this website is proof that there is a visual disparity between communities of false and non-rumor information spread. The website is avaliable [[https://alexanderdavid.github.io/DataVisualizationFinalProject/][here]].
