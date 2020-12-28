@@ -1,3 +1,3 @@
 #+draft: false
 #+type: static
-**Hi**, I'm Alex Day. I am a first year computer science Ph.D. student at [[https://clemson.edu][Clemson University]] (hopefully) researching multi-agent navigation. This is a place for me to collect my ramblings and accomplishments.
+**Hi**, I'm [[/about][Alex Day]]. I am a first year computer science Ph.D. student at [[https://clemson.edu][Clemson University]] researching multi-agent navigation. This is a place for me to collect my ramblings and accomplishments.
