@@ -1,7 +1,7 @@
 #+TITLE: Emoji Summarization
 #+date: 2019-12-13
 #+description: A new algorithm to translate sentences into multiple emojis
-#+tags
+#+tags[]: Capstone_Project, NLP
 
 For my senior year capstone project at Clarion University I worked with another student to try and summarize sentences by producing a string of emojis. We accomplished this goal through the use of vector embeddings. The [[/posts/naive-emoji-summarization/][initial]] algorithm is explained in a blog posts, as well as a [[/posts/dependency-tree-collapse/][novel sentence segmentation algorithm]] that I developed as a consequence of the project. We presented this project at the Penn York conference([[/ppt/PennYorkSentenceCompression.pptx][slides]], [[/pdf/PennYorkAbstract.pdf][abstract]]) in Clarion and published a [[/pdf/emoji.pdf][paper]] at the 2020 PACISE conference.
 

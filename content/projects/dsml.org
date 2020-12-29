@@ -1,7 +1,7 @@
 #+title: DSML 4 Kidz
 #+date: 2019-08-06
 #+description: My summer research internship at the University of Arizona's ECE department's CATVehicle REU
-#+tags[]: REU
+#+tags[]: REU python
 
 In the summer of 2019 I was lucky enough to be accepted into the University of
 Arizona's [[http://catvehicle.arizona.edu/verification-and-creation-autonomous-vehicle-trajectories-non-experts-reactive-design-time-feedback][CATVehicle]] REU. Over the course of 10 weeks my group mates and I

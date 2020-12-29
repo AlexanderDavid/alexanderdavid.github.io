@@ -1,6 +1,6 @@
 #+title: Stock Clustering
 #+date: 2020-05-20T23:41:25-04:00
-#+tags[]:
+#+tags[]: NLP
 #+description: Clustering stock descriptions by their descriptions
 
 One of the problems in Natural Language Processing (and a problem I'm facing at work) is how to cluster documents into groups based on their contents. There are two broad approaches to solving the document clustering problem, supervised and unsupervised machine learning. Supervised machine learning relies on labeled data and unsupervised learning tries to categorize the data without any prior labels. These two methods both have their ups and downs that I will not go into here. For the task of clustering stock descriptions we will be using unsupervised clustering, more specifically k-means clustering.
