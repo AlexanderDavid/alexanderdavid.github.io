@@ -16,8 +16,7 @@
 <p><strong>Day, Alex</strong>, Chris Mankos, Soo Kim, and Jody Strausser. 2020. “CoNFET: An
     English Sentence to Emojis Translation Algorithm.” In <em>Proceedings of the
     35th Annual Spring Conference of the Pennsylvania Computer and Information
-    Science Educators</em>. Pennsylvania Computer Information Science Educators.
-    <strong>Forthcoming</strong> [<a
+    Science Educators</em>, 61, 69. Pennsylvania Computer Information Science Educators. [<a
         href="https://github.com/AlexanderDavid/Sentence-to-Emoji-Translation">code</a>]
         [<a href="/pdf/emoji.pdf">pdf</a>] [<a href="/ppt/SentenceEmojiTranslation.pptx">slides</a>]</p>
 </div>
