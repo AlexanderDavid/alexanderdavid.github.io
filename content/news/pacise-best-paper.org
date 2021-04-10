@@ -1,4 +1,4 @@
 #+title: "PACISE Best Undergraduate Paper Award"
 #+date: 2021-01-06
-#+summary: Awarded best undergraduate student paper award for emoji translation paper (https://www.alexday.me/projects/emoji/)
+#+summary: Awarded best undergraduate student paper award for emoji translation paper ( https://www.alexday.me/projects/emoji/ )
 Testing
