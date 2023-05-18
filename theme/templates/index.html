@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="aboutme">
+    <div style="text-align: justify" class="container" >
+    <h2>About Me</h2>
+        {% for a in ABOUT %}
+        <p>
+            {{ a }}
+        </p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="containerart">
+    <div class="container">
+        <h2>Recent Articles &nbsp; <a href='{{ SITEURL }}/archives'>[Archives]</a></h2>
+         <table class="experiencetable">
+            {% for article in dates %}
+            <tr> 
+                <td class="date" style="width:350px;"> {{ article.date.strftime('%Y.%m') }}: </td> <td><a href="{{ SITEURL }}/{{ article.url }}"> {{ article.title }} </a> <br> <span style="color: #777">{{ article.description }}</span> </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+<div class="containerexp">
+    <div class="container">
+    <h2>Experience</h2>
+
+    <table class="experiencetable">
+        {% for date, title, desc in EXPERIENCE %}
+        <tr> 
+            <td class="date" style="width:350px;"> {{ date }}: </td> <td> {{ title }} <br> <span style="color: #777">{{ desc }}</span> </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+    <ul>
+
+        
+    </ul>
+    </div>
+</div>
+
+<!-- <div class="containerews">
+    <div class="container">
+    <h2>News</h2>
+    <table class="newstable">
+        {% for date, item in NEWS %}
+        <tr> 
+        <td>
+            <b>{{ date }}:</b> {{ item }}
+        </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div> -->
+
+<div class="containerpub">
+    <div class="container">
+    <h2>Publications</h2>
+    {% for title, img, authors, links in PUBLICATIONS %}
+        <div class="publication">
+        <div class="imgcont">
+            <img src="{{ SITE_URL }}/{{ img }}" alt="" class="publogo">
+        </div>
+        <div class="papercont">
+            <strong>{{ title }}</strong>
+            <div class="authors">
+            {% for author in authors %}
+                <span {% if author == AUTHOR %}class="me"{% endif %}>{{ author }}</span>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+            </div>
+            {% for text, link in links %}
+            <span class="links">
+                <a href="{{ link }}">{{ text }}</a> 
+            </span>
+            {% endfor %}
+        </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
