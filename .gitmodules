@@ -1,0 +1,12 @@
+[submodule "plugins/render-math"]
+	path = plugins/render-math
+	url = git@github.com:pelican-plugins/render-math.git
+[submodule "plugins/pelican-cite"]
+	path = plugins/pelican-cite
+	url = git@github.com:VorpalBlade/pelican-cite.git
+[submodule "pelican-cite"]
+	path = pelican-cite
+	url = git@github.com:VorpalBlade/pelican-cite.git
+[submodule "pelican_cite"]
+	path = pelican_cite
+	url = git@github.com:VorpalBlade/pelican-cite.git
