@@ -3,6 +3,7 @@ SITENAME = "Alex Day"
 SITEURL = ""
 
 PATH = "content"
+PUBLICATIONS_SRC = 'content/pubs.bib'
 
 TIMEZONE = "America/New_York"
 
@@ -10,8 +11,8 @@ DEFAULT_LANG = "en"
 
 STATIC_PATHS = ["images", "pdfs"]
 
-PLUGIN_PATHS=['./plugins']
-PLUGINS = ['render_math']
+PLUGIN_PATHS = ['./plugins']
+PLUGINS = ['render_math', 'pelican_cite']
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -26,14 +27,17 @@ EMAIL = "alex@alexday.me"
 PROFILE = "images/profile.jpg"
 
 # Blogroll
-LINKS = (("LinkedIn", "https://www.linkedin.com/in/AlexanderDavidDay"),
-         ("GitHub", "https://www.github.com/AlexanderDavid"),
-         ("Resume", SITEURL + "/pdfs/day_resume.pdf"),)
+LINKS = [
+    ("LinkedIn", "https://www.linkedin.com/in/AlexanderDavidDay"),
+    ("GitHub", "https://www.github.com/AlexanderDavid"),
+    ("Resume", SITEURL + "/pdfs/day_resume.pdf")
+]
 
 # Internal
-INTERNAL = (("Home", "/"),
-         ("Archives", "archives"),
-         ("Tags", "tags"),)
+INTERNAL = [
+    ("Home", "/"),
+    ("Archives", "archives")
+]
 
 ABOUT = [
     "I am a third year Ph.D. student at <a href='https://clemson.edu'>Clemson University</a> researching in the <a href='https://motion-lab.github.io/'>" + \
@@ -88,7 +92,6 @@ PUBLICATIONS = [
         ]
     )
 ]
-
 
 DEFAULT_PAGINATION = 10
 
