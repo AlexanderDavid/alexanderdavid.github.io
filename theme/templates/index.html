@@ -14,12 +14,11 @@
 
 <div class="containerart">
     <div class="container">
-        <h2>Recent Articles &nbsp; <a href='{{ SITEURL }}/archives'>[Archives]</a></h2>
+        <h2>Recent Articles</h2>
          <table class="experiencetable">
             {% for article in dates %}
             <tr> 
-                <td class="date" style="width:350px;"> {{ article.date.strftime('%Y.%m') }}: </td> <td><a href="{{ SITEURL }}/{{ article.url }}"> {{ article.title }} </a> <br> <span style="color: #777">{{ article.description }}</span> </td>
-
+                <td class="date" style="width:350px;"> {{ article.date.strftime('%Y.%m.%d') }}: </td> <td><a href="{{ SITEURL }}/{{ article.url }}"> {{ article.title }} </a> <br> <span style="color: #777">{{ article.description }}</span> </td>
             </tr>
             {% endfor %}
         </table>
