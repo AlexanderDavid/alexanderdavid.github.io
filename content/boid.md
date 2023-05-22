@@ -2,6 +2,7 @@ Title: Learning to be a Boid
 Date: 2023-05-17 12:00
 Category: Motion Planning
 Description: Learning how to flock and generating datasets using Reynolds Boids
+Status: draft
 
 ## Algorithm
 The Boids algorithm is meant to simulate the movement of starling-like birds with their mesmerizing flocking behavior. While this natural behavior is certainly more complex than my simple 2D simulation there are still some really pretty emergent behaviors that fall out of such simple rules. In this way Boids are very similar to Conway's Game of Life. In the Boids simulation there are three fundimental flocking forces facilitating the behavior. 
