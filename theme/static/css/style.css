@@ -18,6 +18,11 @@
     --headerc: #28666E; /* #7B9E87;
     --urlcolor: #E5DDDC;
   } */
+
+html,body {
+    height:100%;
+}
+
   .aboutme p { font-size : 17px; margin: 0 0 25px }
   p { font-size : 17px;  }
   li {font-size: 17px; padding: 2px;}
@@ -53,7 +58,7 @@
       font-weight: bold
   }
   
-  .generalcontainer { min-height: 90%; margin : 0px auto;  width: 100%; background-color:var(--bkg); border-radius: 10px; clear:both; color:var(--textc)}
+  .generalcontainer { min-height: 100%; margin : 0px auto;  width: 100%; background-color:var(--bkg); border-radius: 10px; clear:both; color:var(--textc)}
   
   #bio { height : 250px; position: relative; float : left; width : 550px; color:var(--bkg) }
   #bio a { color:var(--urlcolor)}
