@@ -1,3 +1,7 @@
+from pelican.plugins import render_math
+import markdown.extensions.tables
+import pelican_cite
+
 AUTHOR = "Alex Day"
 SITENAME = "Alex Day"
 SITEURL = ""
@@ -11,8 +15,7 @@ DEFAULT_LANG = "en"
 
 STATIC_PATHS = ["images", "pdfs"]
 
-PLUGIN_PATHS = ['./plugins']
-PLUGINS = ['render_math', 'pelican_cite']
+PLUGINS = [render_math, pelican_cite]
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -44,7 +47,8 @@ ABOUT = [
     "Motion Planning Lab</a> under Dr. Ioannis Karamouzas. I got my B.S. in Computer Science from <a href='https://clarion.edu'>Clarion University</a> " + \
     "(now WestPenn Clarion) in 2019. My passion for robotics started during an REU experience I had with the <a href='https://catvehicle.arizona.edu/'>" + \
     "CAT Vehicle</a> team at the University of Arizona and has been fueled by the interesting projects in grad school as well as industry internships.",
-    "My interests revolve around motion planning wheeled robots (from Roombas to AVs) and I currently focus on human-robot interaction (HRI)."
+    "My research interests revolve around motion planning wheeled robots (from Roombas to AVs) and I currently focus on human-robot interaction (HRI). " + \
+    "Outside of my research I am very bad at chess, Brazilian Jiu Jitsu, and climbing, but I am still in love with all three."
 ]
 
 # Experience
@@ -97,3 +101,24 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
+
+# for bootstrap:
+table_css_class = 'table'
+
+class BetterMDTableProcessor(markdown.extensions.tables.TableProcessor):
+    def run(self, parent, blocks):
+        super().run(parent, blocks)
+        for e in parent:
+            if e.tag == 'table':
+                e.attrib['class'] = table_css_class
+
+class BetterMDTableExtension(markdown.extensions.tables.TableExtension):
+    def extendMarkdown(self, md):
+        if '|' not in md.ESCAPED_CHARS:
+            md.ESCAPED_CHARS.append('|')
+        md.parser.blockprocessors.register(BetterMDTableProcessor(md.parser), 'table', 75)
+
+MARKDOWN = {
+    'extensions': [ BetterMDTableExtension() ],
+    'output_format': 'html5',
+}
