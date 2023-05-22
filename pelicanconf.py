@@ -13,7 +13,8 @@ TIMEZONE = "America/New_York"
 
 DEFAULT_LANG = "en"
 
-STATIC_PATHS = ["images", "pdfs"]
+STATIC_PATHS = ["images", "pdfs", "extra"]
+EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 
 PLUGINS = [render_math, pelican_cite]
 
