@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <link rel="stylesheet" href="/theme/css/style.css">
+        <link rel="stylesheet" href="/theme/css/pygment.css">
+
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+
+
+          <title>Alex Day - Learning to be a Boid</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+    <meta name="description" content="Learning how to flock and generating datasets using Reynolds Boids" />
+
+
+</head>
+
+<body>
+  <div class="generalcontainer">
+    <header>
+      <div class="titlesec">
+        <div class="title">
+          <div class="cont">
+            <div id="sidebar"><img src="/images/profile.jpg" id="me" width="220" itemprop="photo"></div>
+            <div id="bio">
+              <div id="biocont">
+                <h1 style="padding-bottom: 6px"><span itemprop="name">Alex Day</span></h1>
+                <p style="line-height:30px;">
+                  <span>Research Assistant @ Clemson University</span> <br> 
+                </p>
+                <p style="line-height:22px;">
+                  <a href="mailto:alex@alexday.me">alex@alexday.me</a><br>
+                </p>
+                <p class="external">
+                    <a href="https://www.linkedin.com/in/AlexanderDavidDay"  class="first" >LinkedIn</a>  &bull;                     <a href="https://www.github.com/AlexanderDavid" >GitHub</a>  &bull;                     <a href="/pdfs/day_resume.pdf" >Resume</a>                 </p>
+                <p class="internal">
+                    <a href="/"  class="first" >Home</a>  &bull;                     <a href="archives" >Archives</a>                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+  <div class="container">
+    <header>
+      <h1 class="entry-title">Learning to be a Boid</h1>
+  
+    </header>
+    <footer class="post-info">
+      <time class="published" datetime="2023-05-17T12:00:00-04:00">
+        2023.05
+      </time>
+
+      <!--       <address class="vcard author">
+        By             <a class="url fn" href="/author/alex-day.html">Alex Day</a>
+      </address>
+ -->
+
+      <div class="category">
+          Category: <a href="/category/motion-planning.html">Motion Planning</a>
+      </div>
+
+    </footer><!-- /.post-info -->
+    <br />
+    <article>
+      <h2>Algorithm</h2>
+<p>The Boids algorithm is meant to simulate the movement of starling-like birds with their mesmerizing flocking behavior. While this natural behavior is certainly more complex than my simple 2D simulation there are still some really pretty emergent behaviors that fall out of such simple rules. In this way Boids are very similar to Conway's Game of Life. In the Boids simulation there are three fundimental flocking forces facilitating the behavior. </p>
+<h3>Seperation</h3>
+<p>The seperation force ensures no two agents get too close to eachother. The force is calculated as the sum of all the vectors pointing away from each of the neighbors. This vector is scaled by an avoidance factor which was 0.1 in my simulation. This seperation force is only applied to neighbors which fall within a protected range which was 2 in my simulation. </p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">seperation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FlockingAgent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">close</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="n">close</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">-</span> <span class="n">n</span><span class="o">.</span><span class="n">_pos</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vel</span> <span class="o">+=</span> <span class="n">close</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_avoid_factor</span>
+</code></pre></div>
+
+<h3>Cohesion</h3>
+<p>The cohesion and alignment forces are strongly linked in both purpose and execution. They aim to propel both the agents position and velocity towards the average of the neighbors in the visual range. These agents are not as much of an imminent collision threat as the agents in the protected range and this is what the real flocking behavior emerges from.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">cohesion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FlockingAgent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">avg_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="n">avg_pos</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">_pos</span>
+    <span class="n">avg_pos</span> <span class="o">/=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vel</span> <span class="o">+=</span> <span class="p">(</span><span class="n">avg_pos</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_center_factor</span>
+</code></pre></div>
+
+<h3>Alignment</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FlockingAgent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">avg_vel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="n">avg_vel</span> <span class="o">+=</span> <span class="n">n</span><span class="o">.</span><span class="n">_vel</span>
+    <span class="n">avg_vel</span> <span class="o">/=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vel</span> <span class="o">+=</span> <span class="p">(</span><span class="n">avg_vel</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vel</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_factor</span>
+</code></pre></div>
+
+<h2>Learning to Flock</h2>
+<p>Over the last several years there 
+[@durve2020learning] [@perrin2021flock]</p>
+<h2>Generated Data</h2>
+    </article>
+  </div>
+
+  </div>
+</body>
+</html>
