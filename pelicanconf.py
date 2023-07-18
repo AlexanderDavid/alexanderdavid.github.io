@@ -1,13 +1,12 @@
 from pelican.plugins import render_math
 import markdown.extensions.tables
-import pelican_cite
+# import pelican_cite
 
 AUTHOR = "Alex Day"
 SITENAME = "Alex Day"
 SITEURL = ""
 
 PATH = "content"
-PUBLICATIONS_SRC = 'content/pubs.bib'
 
 TIMEZONE = "America/New_York"
 
@@ -16,7 +15,7 @@ DEFAULT_LANG = "en"
 STATIC_PATHS = ["images", "pdfs", "extra"]
 EXTRA_PATH_METADATA = {'extra/CNAME': {'path': 'CNAME'},}
 
-PLUGINS = [render_math, pelican_cite]
+PLUGINS = [render_math] #, pelican_cite]
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -79,7 +78,17 @@ EXPERIENCE = [
 # Publications
 PUBLICATIONS = [
     (
-        "CONFET: An English Sentence to Emojis Translation Algorithm",
+        "A Study in Zucker: Insights on Human-Robot Interactions",
+        "images/zucker.png",
+        ["Alex Day", "Ioannis Karamouzas"],
+        [
+            ["Paper", "https://arxiv.org/abs/2307.08668"],
+            ["Dataset", "https://github.com/AlexanderDavid/ZuckerDataset"],
+            ["Webpage", "/zucker-study"]
+        ]
+    ),
+    (
+        "COaaaNFET: An English Sentence to Emojis Translation Algorithm",
         "images/confet.png",
         ["Alex Day", "Chris Mankos", "Soo Kim", "Jody Strausser"],
         [
@@ -106,20 +115,20 @@ DEFAULT_PAGINATION = 10
 # for bootstrap:
 table_css_class = 'table'
 
-class BetterMDTableProcessor(markdown.extensions.tables.TableProcessor):
-    def run(self, parent, blocks):
-        super().run(parent, blocks)
-        for e in parent:
-            if e.tag == 'table':
-                e.attrib['class'] = table_css_class
-
-class BetterMDTableExtension(markdown.extensions.tables.TableExtension):
-    def extendMarkdown(self, md):
-        if '|' not in md.ESCAPED_CHARS:
-            md.ESCAPED_CHARS.append('|')
-        md.parser.blockprocessors.register(BetterMDTableProcessor(md.parser), 'table', 75)
-
-MARKDOWN = {
-    'extensions': [ BetterMDTableExtension() ],
-    'output_format': 'html5',
-}
+# class BetterMDTableProcessor(markdown.extensions.tables.TableProcessor):
+#     def run(self, parent, blocks):
+#         super().run(parent, blocks)
+#         for e in parent:
+#             if e.tag == 'table':
+#                 e.attrib['class'] = table_css_class
+# 
+# class BetterMDTableExtension(markdown.extensions.tables.TableExtension):
+#     def extendMarkdown(self, md):
+#         if '|' not in md.ESCAPED_CHARS:
+#             md.ESCAPED_CHARS.append('|')
+#         md.parser.blockprocessors.register(BetterMDTableProcessor(md.parser), 'table', 75)
+# 
+# MARKDOWN = {
+#     'extensions': [ BetterMDTableExtension() ],
+#     'output_format': 'html5',
+# }
