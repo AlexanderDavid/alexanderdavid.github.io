@@ -89,7 +89,7 @@ PUBLICATIONS = [
         ],
     ),
     (
-        "COaaaNFET: An English Sentence to Emojis Translation Algorithm",
+        "CONFET: An English Sentence to Emojis Translation Algorithm",
         "images/confet.png",
         ["Alex Day", "Chris Mankos", "Soo Kim", "Jody Strausser"],
         [
@@ -98,6 +98,7 @@ PUBLICATIONS = [
                 "http://granite.sru.edu/~pacise/proceedings/pacise-proceedings-2020.pdf#page=61",
             ],
             ["Code", "https://github.com/AlexanderDavid/SentenceToEmojiTranslation"],
+            ["Slides", "/pdfs/day2020confet_slides.pdf"]
         ],
     ),
     (
