@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Alex Day - Motion Planning</title><link href="htpps://alexday.me/" rel="alternate"/><link href="feeds/motion-planning.atom.xml" rel="self"/><id>htpps://alexday.me/</id><updated>2023-05-22T12:00:00-04:00</updated><entry><title>Pedestrain Datasets</title><link href="pedestrain-datasets.html" rel="alternate"/><published>2023-05-22T12:00:00-04:00</published><updated>2023-05-22T12:00:00-04:00</updated><author><name>Alex Day</name></author><id>tag:None,2023-05-22:pedestrain-datasets.html</id><summary type="html">&lt;p&gt;Over the course of my PhD my lab has been using various pedestrian datasets to learn new behavior or analyze existing behavior. These datasets are always sent around or kept in GitHub repositories and rarely did I gather them from their initial sources. I wanted to try and track down …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Over the course of my PhD my lab has been using various pedestrian datasets to learn new behavior or analyze existing behavior. These datasets are always sent around or kept in GitHub repositories and rarely did I gather them from their initial sources. I wanted to try and track down the initial upload of each of the commonly used datasets and collect them here. &lt;/p&gt;
+&lt;table class="table"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th scope="col"&gt;Name&lt;/th&gt;
+            &lt;th scope="col"&gt;Author&lt;/th&gt;
+            &lt;th scope="col"&gt;Description&lt;/th&gt;
+            &lt;th scope="col"&gt;Links&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;BioTracking&lt;/th&gt;
+            &lt;td&gt;Georgia Tech BORG Lab&lt;/td&gt;
+            &lt;td&gt;Laser tracked data of individuals moving and not colliding&lt;/td&gt;
+            &lt;td&gt;&lt;a href="https://sites.cc.gatech.edu/~borg/biotracking/experimental-data.html"&gt;BORG Lab&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;BIWI Walking Pedestrians dataset&lt;/th&gt;
+            &lt;td&gt;ETH Zurich CV Lab&lt;/td&gt;
+            &lt;td&gt;Contains the ETH and Hotel datasets&lt;/td&gt;
+            &lt;td&gt;&lt;a href="https://web.archive.org/web/20170706113726/https://vision.ee.ethz.ch/datasets_extra/ewap_dataset_full.tgz"&gt;Wayback Machine&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;th scope="row"&gt;UCY Dataset&lt;/th&gt;
+            &lt;td&gt;UCY Graphics Lab&lt;/td&gt;
+            &lt;td&gt;Contains Zara, Zara01, Zara02, Students003, and Arxiepiskopi&lt;/td&gt;
+            &lt;td&gt;&lt;a href="https://graphics.cs.ucy.ac.cy/research/downloads/crowd-data"&gt;UCY Graphics Lab&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</content><category term="Motion Planning"/></entry></feed>
