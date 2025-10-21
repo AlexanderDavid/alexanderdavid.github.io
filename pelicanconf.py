@@ -29,7 +29,7 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Author Information
-AUTHOR_TITLE = "Research Assistant @ Clemson University"
+AUTHOR_TITLE = "Software Engineer @ Carnegie Robotics"
 EMAIL = "alex@alexday.me"
 PROFILE = "images/profile.jpg"
 
@@ -44,25 +44,33 @@ LINKS = [
 INTERNAL = [("Home", "/"), ("Archives", "archives")]
 
 ABOUT = [
-    "I am a third year Ph.D. student at <a href='https://clemson.edu'>Clemson University</a> researching in the <a href='https://motion-lab.github.io/'>"
+    "I'm a software engineer at Carnegie Robotics working on perception and low level controllers for autonomous ground vehicles"
+    "I recieved my M.S. in Computer Science from <a href='https://clemson.edu'>Clemson University</a> researching in the <a href='https://motion-lab.github.io/'>"
     + "Motion Planning Lab</a> under Dr. Ioannis Karamouzas. I got my B.S. in Computer Science from <a href='https://clarion.edu'>Clarion University</a> "
     + "(now WestPenn Clarion) in 2019. My passion for robotics started during an REU experience I had with the <a href='https://catvehicle.arizona.edu/'>"
-    + "CAT Vehicle</a> team at the University of Arizona and has been fueled by the interesting projects in grad school as well as industry internships.",
-    "My research interests revolve around motion planning wheeled robots (from Roombas to AVs) and I currently focus on human-robot interaction (HRI). "
-    + "Outside of my research I am very bad at chess, Brazilian Jiu Jitsu, and climbing, but I am still in love with all three.",
+    + "CAT Vehicle</a> team at the University of Arizona"
 ]
 
 # Experience
 EXPERIENCE = [
     (
-        "2020.08 - Present",
+        "2024.01 - "
+        "Robotics Software Engineer @ Carnegie Robotics"
+        "Working on perception algorithms for large autonomous vehicles
+    )
+    (
+        "2023.08 - 2023.12",
+        "Robotics Software Engineer @ Dimaag",
+        "Worked on navigation algorithms for large autonomous vehicles"
+    (
+        "2020.08 - 2023.12",
         "Research Assistant @ Clemson University Motion Planning Lab",
-        "Advised by Dr. Ioannis Karamouzas",
+        "Studied social robot navigation and how humans react. Advised by Dr. Ioannis Karamouzas",
     ),
     (
         "2020.08 - 2022.08",
         "Lead Graduate Teaching Assistant @ Clemson University",
-        "Running, developing, and grading lab sessions for intro and intermediate Java/software development courses",
+        "Ran, developed, and graded lab sessions for intro and intermediate Java/software development courses",
     ),
     (
         "Summer 2021, 2022, Winter 2021, 2022",
