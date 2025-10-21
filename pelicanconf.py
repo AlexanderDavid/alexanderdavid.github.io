@@ -1,4 +1,4 @@
-from pelican.plugins import render_math
+# from pelican.plugins import render_math
 import markdown.extensions.tables
 
 # import pelican_cite
@@ -19,7 +19,7 @@ EXTRA_PATH_METADATA = {
     "extra/favicon.ico": {"path": "favicon.ico"},
 }
 
-PLUGINS = [render_math]  # , pelican_cite]
+PLUGINS = [] #[render_math]  # , pelican_cite]
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -44,8 +44,8 @@ LINKS = [
 INTERNAL = [("Home", "/"), ("Archives", "archives")]
 
 ABOUT = [
-    "I'm a software engineer at Carnegie Robotics working on perception and low level controllers for autonomous ground vehicles"
-    "I recieved my M.S. in Computer Science from <a href='https://clemson.edu'>Clemson University</a> researching in the <a href='https://motion-lab.github.io/'>"
+    "I'm a software engineer at Carnegie Robotics working on perception and low level controllers for autonomous ground vehicles. "
+    + "I recieved my M.S. in Computer Science from <a href='https://clemson.edu'>Clemson University</a> researching in the <a href='https://motion-lab.github.io/'>"
     + "Motion Planning Lab</a> under Dr. Ioannis Karamouzas. I got my B.S. in Computer Science from <a href='https://clarion.edu'>Clarion University</a> "
     + "(now WestPenn Clarion) in 2019. My passion for robotics started during an REU experience I had with the <a href='https://catvehicle.arizona.edu/'>"
     + "CAT Vehicle</a> team at the University of Arizona"
@@ -54,14 +54,15 @@ ABOUT = [
 # Experience
 EXPERIENCE = [
     (
-        "2024.01 - "
-        "Robotics Software Engineer @ Carnegie Robotics"
-        "Working on perception algorithms for large autonomous vehicles
-    )
+        "2024.01 - ",
+        "Robotics Software Engineer @ Carnegie Robotics LLC",
+        "Working on perception algorithms for large autonomous vehicles"
+    ),
     (
         "2023.08 - 2023.12",
-        "Robotics Software Engineer @ Dimaag",
+        "Robotics Software Engineering Intern @ Dimaag",
         "Worked on navigation algorithms for large autonomous vehicles"
+    ),
     (
         "2020.08 - 2023.12",
         "Research Assistant @ Clemson University Motion Planning Lab",
@@ -81,7 +82,7 @@ EXPERIENCE = [
         "2020.05 - 2020.08",
         "Data Scientist (R&D) @ JGMS Inc.",
         "Developed deep learning for government document summarization and classification",
-    ),
+    )
 ]
 
 # Publications

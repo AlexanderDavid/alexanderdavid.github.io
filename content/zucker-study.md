@@ -42,12 +42,14 @@ In recent years there has been a large focus on how robots can operate in human 
 
 ## Bib
 ```bibtex
-@misc{day2023zucker,
-      title={A Study in Zucker: Insights on Human-Robot Interactions}, 
-      author={Alex Day and Ioannis Karamouzas},
-      year={2023},
-      eprint={2307.08668},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO}
+@article{day2024study,
+  title={A Study in Zucker: Insights on Interactions Between Humans and Small Service Robots},
+  author={Day, Alex and Karamouzas, Ioannis},
+  journal={IEEE Robotics and Automation Letters},
+  volume={9},
+  number={3},
+  pages={2471--2478},
+  year={2024},
+  publisher={IEEE}
 }
 ```
