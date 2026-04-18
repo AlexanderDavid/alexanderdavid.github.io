@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-markupsafe = "==2.0.0"
 pelican-render-math = "*"
 pelican = {extras = ["markdown"], version = "*"}
 
