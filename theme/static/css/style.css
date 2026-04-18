@@ -38,8 +38,20 @@ html,body {
       padding-bottom: 10px;
   }
   
-  div .aboutme {
-      background: var(--bkg-alt);
+  .header-about {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin-top: 20px;
+  }
+  .header-about .container {
+      padding-top: 20px;
+      padding-bottom: 20px;
+  }
+  .header-about p {
+      color: rgba(255,255,255,0.8);
+      font-size: 16px;
+      line-height: 1.7;
+      margin: 0;
+      text-align: justify;
   }
 
   div .containerexp {
