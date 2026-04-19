@@ -76,17 +76,18 @@
             </div>
           </div>
         </div>
-        {% if ABOUT %}
-        <div class="header-about">
-          <div class="container">
-            {% for a in ABOUT %}
-            <p>{{ a }}</p>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
       </div>
     </header>
+
+    {% if ABOUT %}
+    <div class="header-about">
+      <div class="container">
+        {% for a in ABOUT %}
+        <p>{{ a }}</p>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
     {% block content %}
     {% endblock %}
